@@ -9,7 +9,7 @@ import {getAllRooms, getRoom} from "../Controllers/roomController";
 
 const router = express.Router()
 
-router.get('me', requirePlayerCreated,(req, res, next) => {
+router.get('/me', requirePlayerCreated,(req, res, next) => {
     // @ts-ignore
     const session: IClientSession = req.session
     const playerId: string = session.playerId
@@ -44,6 +44,8 @@ router.post('/:playerId/admin/edit',
     }
 )
 
+
+
 router.get('/all',
     requireAdmin,
     (req, res, next) => {
@@ -51,7 +53,7 @@ router.get('/all',
     }
 )
 
-router.post('create',
+router.post('/create',
     body('name').trim().escape().notEmpty().isLength({min: 4, max: 25}),
     (req, res, next) => {
         // @ts-ignore
@@ -66,7 +68,9 @@ router.post('create',
         res.send(player)
     })
 
-router.post('log',
+
+
+router.post('/login',
     body('name').trim().escape().notEmpty().isLength({min: 4, max: 25}),
     body('playerId').trim().escape().notEmpty(),
     (req, res, next) => {

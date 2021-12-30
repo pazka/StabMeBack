@@ -34,7 +34,7 @@ export function getPlayer(playerId: string) {
 }
 
 export function findPlayer(name :string){
-    return allPlayers.find((p:Player) => p.Name == name)
+    return Object.values(allPlayers).find((p:Player) => p.Name == name)
 }
 
 export function savePlayer(player: Player) {

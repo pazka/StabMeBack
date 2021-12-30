@@ -8,6 +8,7 @@ import * as path from 'path'
 import {initConfig,getConfig} from "./Services/env"
 initConfig(path.join(__dirname, "./env.json"))
 
+const PORT = getConfig('PORT')
 import routes from './Services/api'
 import * as sockets from './Services/sockets'
 import playerRoutes from "./routes/playerRoutes"
@@ -40,22 +41,40 @@ app.use(morgan('combined'));
 
 if (getConfig('debug')){
     const swaggerUi = require('swagger-ui-express');
-    const swaggerJSDoc = require('swagger-jsdoc');
-    const swaggerSpec = swaggerJSDoc({
-        definition: {
-            openapi: '3.0.0',
-            info: {
-                title: 'StabMeBackAPI',
-                version: '1.0.0',
-            },
+    
+    const swaggerAutogen = require('swagger-autogen')();
+
+    const doc = {
+        info: {
+            title: 'My API',
+            description: 'Description',
         },
-        apis: ['./Services/api.ts','./routes/*.ts'], // files containing annotations as above
+        host: 'localhost:'+8080,
+        schemes: ['http'],
+    };
+    const filepath = './swagger-doc.json'
+
+    swaggerAutogen(filepath, ['./index.js','./routes/*'], doc).then(()=>{
+        app.use('/api-docs', swaggerUi.setup(require(filepath)));
     })
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 }
+
+let session = require('express-session');
+let sessionOptions = {
+    secret: getConfig('session.CookieSecret'),
+    cookie: {
+        maxAge:getConfig('session.TTL')
+    },
+    saveUninitialized: true,
+    resave:true,
+    secure : !getConfig('debug')
+};
+
+app.use(session(sessionOptions));
 
 // @ts-ignore
 app.use('/', express.static(path.join(__dirname, 'front/build/')));
+
 app.use('/api', routes)
 app.use('/player', playerRoutes)
 app.use('/room', roomRoutes)
@@ -65,8 +84,8 @@ app.use('/game', gameRoutes)
 Promise.all([
     sockets.init(httpServer)
 ]).then(() => {
-    httpServer.listen(getConfig('PORT'), () => {
-        logger.log('Listening on ' + getConfig('PORT'))
+    httpServer.listen(PORT, () => {
+        logger.log('Listening on ' + PORT)
     });
 })
 

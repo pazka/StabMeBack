@@ -12,6 +12,7 @@ import Player from "../Domain/Player";
 
 const router = express.Router()
 
+
 router.get('/:roomId/admin',
     requireAdmin,
     (req, res, next) => {
@@ -19,12 +20,14 @@ router.get('/:roomId/admin',
     }
 )
 
+
 router.get('/all',
     requireAdmin,
     (req, res, next) => {
         res.send(getAllRooms())
     }
 )
+
 
 router.post('/create',
     body('password').default('').trim().escape(),
@@ -38,6 +41,7 @@ router.post('/create',
         }
     }
 )
+
 
 router.post('/:roomId/join',
     body('password').default('').trim().escape(),
@@ -74,6 +78,7 @@ router.post('/:roomId/join',
         res.send(room)
     }
 )
+
 
 router.get('/:roomId',
     requireRoomJoined,

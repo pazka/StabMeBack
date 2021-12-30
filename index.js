@@ -8,6 +8,7 @@ var morgan = require("morgan");
 var path = require("path");
 var env_1 = require("./Services/env");
 (0, env_1.initConfig)(path.join(__dirname, "./env.json"));
+var PORT = (0, env_1.getConfig)('PORT');
 var api_1 = require("./Services/api");
 var sockets = require("./Services/sockets");
 var playerRoutes_1 = require("./routes/playerRoutes");
@@ -33,20 +34,32 @@ app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('combined'));
 if ((0, env_1.getConfig)('debug')) {
-    var swaggerUi = require('swagger-ui-express');
-    var swaggerJSDoc = require('swagger-jsdoc');
-    var swaggerSpec = swaggerJSDoc({
-        definition: {
-            openapi: '3.0.0',
-            info: {
-                title: 'StabMeBackAPI',
-                version: '1.0.0',
-            },
+    var swaggerUi_1 = require('swagger-ui-express');
+    var swaggerAutogen = require('swagger-autogen')();
+    var doc = {
+        info: {
+            title: 'My API',
+            description: 'Description',
         },
-        apis: ['./Services/api.ts', './routes/*.ts'],
+        host: 'localhost:' + 8080,
+        schemes: ['http'],
+    };
+    var filepath_1 = './swagger-doc.json';
+    swaggerAutogen(filepath_1, ['./index.js', './routes/*'], doc).then(function () {
+        app.use('/api-docs', swaggerUi_1.setup(require(filepath_1)));
     });
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 }
+var session = require('express-session');
+var sessionOptions = {
+    secret: (0, env_1.getConfig)('session.CookieSecret'),
+    cookie: {
+        maxAge: (0, env_1.getConfig)('session.TTL')
+    },
+    saveUninitialized: true,
+    resave: true,
+    secure: !(0, env_1.getConfig)('debug')
+};
+app.use(session(sessionOptions));
 app.use('/', express.static(path.join(__dirname, 'front/build/')));
 app.use('/api', api_1.default);
 app.use('/player', playerRoutes_1.default);
@@ -55,8 +68,8 @@ app.use('/game', gameRoutes_1.default);
 Promise.all([
     sockets.init(httpServer)
 ]).then(function () {
-    httpServer.listen((0, env_1.getConfig)('PORT'), function () {
-        logger_1.default.log('Listening on ' + (0, env_1.getConfig)('PORT'));
+    httpServer.listen(PORT, function () {
+        logger_1.default.log('Listening on ' + PORT);
     });
 });
 //# sourceMappingURL=index.js.map
