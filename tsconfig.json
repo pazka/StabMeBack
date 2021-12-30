@@ -1,0 +1,23 @@
+﻿{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "allowJs": false,
+    "target": "es5",
+    "lib": ["es6"]
+  },
+  "files" : [
+    "index.ts",
+  ],
+  "include": ["*.ts","./**/*.ts"],
+  "exclude": [
+    "node_modules", 
+    ".*/",
+    "front",
+    "*.js",
+    "*.js.map"
+  ]
+}

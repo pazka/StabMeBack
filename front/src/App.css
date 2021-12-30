@@ -1,0 +1,159 @@
+*{
+  margin : 0;
+  padding : 0;
+}
+
+.mouse-container {
+  
+}
+.mouse-container {
+  position: absolute;
+  top : 0;
+  left : 0;
+  display: flex;
+  flex-direction: column;
+  width : fit-content;
+  z-index: 20;
+}
+
+.mouse-container .info{
+  position: fixed;
+  top : 0;
+  left : 0;
+}
+
+.mouse-container .info > * {
+  background-color: rgba(255,255,255,0.5);
+  padding : 0.5em;
+  border: 1px solid black;
+  border-radius: 0.7rem;
+}
+.mouse-container > *:first-child{
+}
+.mice{
+  padding : 5px;
+  font-weight: bolder;
+}
+.mice:before{
+  content: "";
+  position: absolute;
+  top : 0;
+  left : 0;
+  width : 10px;
+  height: 10px;
+  border-top : 2px solid red;
+  border-left : 2px solid red;
+}
+
+
+.name-container{
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+}
+
+.name-item{
+  width: fit-content;
+  min-width:10rem;
+  z-index: 30;
+  display: block;
+  position: absolute;
+}
+
+.name-item:hover p{
+  border : dashed 2px gray;
+}
+
+.name-item:hover .edit-name-container{
+  position : absolute;
+  top : -1rem ;
+  display : inherit;
+}
+.edit-name-container{
+  position : absolute;
+  top : -10px ;
+  display : none;
+  transition : all 0.5s
+}
+
+.edit-name-item{
+  width : fit-content;
+  display: flex;
+}
+
+.layer-container{
+  position: fixed;
+  display: block;
+  min-width: 50px;
+  min-height: 50px;
+  top: 0;
+  right: 0;
+  z-index: 50;
+}
+
+.layer-container > *{
+  width : auto;
+}
+
+.layer-item{
+  display: flex;
+  align-items: end;
+  justify-content: flex-end;
+  
+  min-width: 100px;
+  cursor: pointer;
+  border-radius: 0.3rem;
+  background-color: rgba(255,255,255,0.5);
+
+  margin-top : 0.5em;
+  transition: all 0.3s;
+}
+
+.layer-item > p{
+  width: 100%;
+}
+
+.layer-item-selected{
+  background-color: rgba(255,50,0,0.6);
+}
+
+.layer-item:hover{
+  background-color: rgba(255,50,0,0.2);
+  transition: all 0.3s;
+}
+
+.layer-img img{
+  z-index: -1;
+  position : absolute;
+  top : 0;
+  left : 0;
+  overflow: auto;
+}
+
+.layer-controls{
+  background-color: rgba(255,255,255,0.5);
+  z-index: 50;
+  display: flex;
+  position : fixed;
+  width : fit-content;
+  height: fit-content;
+  min-width : 200px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 0.5em;
+  border: solid 1px black;
+}
+
+.layer-controls > * {
+  border-right : solid 1px gray
+}
+.layer-controls > * > *{
+  height: 2rem;
+  margin : 0.5rem;
+  padding: 0.5rem;
+}

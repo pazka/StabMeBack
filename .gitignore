@@ -1,0 +1,11 @@
+# wtf git ignore those dirs goddamit !!
+
+# dependencies
+/node_modules
+node_modules/
+./node_modules/
+/build/
+build/
+.node-persist/
+.idea/
+*.xml
