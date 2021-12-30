@@ -1,7 +1,6 @@
-﻿import {ItemDTO} from "../DTOs/ItemDTO";
-
-import * as persist from 'node-persist'
-import {On, send} from "./events";
+﻿import * as persist from 'node-persist'
+import { send} from "./events";
+import internal_events from "./Constants/allEvents";
 
 let ready = false
 
@@ -53,15 +52,15 @@ async function safeRemove(id: string) {
 }
 
 
-export async function saveItem(item: ItemDTO) {
+export async function saveItem(item: any) {
     try {
         return await safeSet('item-' + item.id, item)
     } catch (e) {
-        send(On.ERROR, e)
+        send(internal_events.ERROR, e)
     }
 }
 
-export async function getItem(item: ItemDTO) {
+export async function getItem(item: any) {
     return await safeGet('item-' + item.id)
 }
 

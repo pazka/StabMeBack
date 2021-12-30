@@ -1,11 +1,11 @@
 ﻿{
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "CommonJS",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "allowJs": false,
+    "allowJs": true,
     "target": "es5",
     "lib": ["es6"]
   },

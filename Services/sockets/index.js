@@ -35,12 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.init = void 0;
 var events_1 = require("../events");
 var env_1 = require("../env");
 var allEvents_1 = require("./allEvents");
 var userInteractions = require("./user-interactions");
+var allEvents_2 = require("../Constants/allEvents");
 var iolib = require('socket.io');
 var io;
 function init(httpServer) {
@@ -48,13 +49,19 @@ function init(httpServer) {
         return __generator(this, function (_a) {
             io = iolib(httpServer, {
                 cors: {
-                    origin: env_1["default"].allowedOrigin,
+                    origin: (0, env_1.getConfig)().allowedOrigin,
                     methods: ["GET", "POST"]
                 }
             });
             io.on('connection', function (socket) {
                 console.log('Client connected');
                 newSocketConnection(socket);
+            });
+            (0, events_1.sub)(allEvents_2.default.ROOM_UPDATED, function (room) {
+                io.broadcast.to(room.Id).emit(allEvents_1.default.updateRoom, room);
+            });
+            (0, events_1.sub)(allEvents_2.default.ERROR, function (error) {
+                io.broadcast.emit(allEvents_1.default.error, error);
             });
             return [2];
         });
@@ -73,15 +80,12 @@ function newSocketConnection(socket) {
         console.log(eventName, args);
     });
     socket.on('connect', function () {
-        console.log(socket.conn.remoteAddress + " connected");
+        console.log("".concat(socket.conn.remoteAddress, " connected"));
     });
     socket.on('disconnect', function () {
-        io.to(currentRoom).emit(allEvents_1["default"].leave, { id: socket.id });
-        console.log(socket.conn.remoteAddress + " disconnected");
+        io.to(currentRoom).emit(allEvents_1.default.leave, { id: socket.id });
+        console.log("".concat(socket.conn.remoteAddress, " disconnected"));
     });
-    (0, events_1.sub)(events_1.On.ERROR, function (error) {
-        io.broadcast.emit(allEvents_1["default"].error, error);
-    });
-    userInteractions.applyEvents(socket, currentRoom);
+    userInteractions.setupClientEvents(socket, currentRoom);
 }
 //# sourceMappingURL=index.js.map

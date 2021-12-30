@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.writeFile = exports.isFormatValid = exports.validFormats = void 0;
 var fs = require("fs");
 var path = require("path");
@@ -14,7 +14,7 @@ function isFormatValid(format) {
 exports.isFormatValid = isFormatValid;
 function writeFile(originalName, roomId, layerId, tempPath) {
     return new Promise(function (resolve, reject) {
-        var targetFolder = path.join(__dirname, "../front/build/uploads/" + roomId);
+        var targetFolder = path.join(__dirname, "../front/build/uploads/".concat(roomId));
         if (!fs.existsSync(targetFolder)) {
             fs.mkdirSync(targetFolder, { recursive: true });
         }
@@ -23,10 +23,10 @@ function writeFile(originalName, roomId, layerId, tempPath) {
             fs.unlink(tempPath, function (err) {
                 if (err)
                     return reject(err);
-                return reject("Only " + exports.validFormats.join(', ') + " files are allowed!");
+                return reject("Only ".concat(exports.validFormats.join(', '), " files are allowed!"));
             });
         }
-        var targetPath = path.join(targetFolder, "" + originalName);
+        var targetPath = path.join(targetFolder, "".concat(originalName));
         fs.rename(tempPath, targetPath, function (err) {
             if (err)
                 return reject(err);

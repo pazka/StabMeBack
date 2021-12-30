@@ -46,23 +46,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
-exports.applyEvents = void 0;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.setupClientEvents = void 0;
 var allEvents_1 = require("./allEvents");
-function applyEvents(socket, currentRoom) {
+function setupClientEvents(socket, currentRoom) {
     var _this = this;
-    socket.on(allEvents_1["default"].join, function (roomId) { return __awaiter(_this, void 0, void 0, function () {
+    socket.on(allEvents_1.default.join, function (roomId) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             currentRoom = roomId;
             socket.join(currentRoom);
-            console.log("joined room-" + currentRoom);
-            socket.to(currentRoom).emit(allEvents_1["default"].join, roomId);
+            console.log("joined room-".concat(currentRoom));
+            socket.to(currentRoom).emit(allEvents_1.default.join, roomId);
             return [2];
         });
     }); });
-    socket.on(allEvents_1["default"].mouse, function (data) {
-        socket.to(currentRoom).emit(allEvents_1["default"].mouse, __assign({ id: socket.id }, data));
+    socket.on(allEvents_1.default.mouse, function (data) {
+        socket.to(currentRoom).emit(allEvents_1.default.mouse, __assign({ id: socket.id }, data));
     });
 }
-exports.applyEvents = applyEvents;
+exports.setupClientEvents = setupClientEvents;
 //# sourceMappingURL=user-interactions.js.map

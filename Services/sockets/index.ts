@@ -3,6 +3,7 @@ import {getConfig} from "../env";
 import allEvents from "./allEvents"
 import * as userInteractions from "./user-interactions";
 import internal_events from "../Constants/allEvents";
+import Room from "../../Domain/Room";
 
 const iolib = require('socket.io')
 let io: any
@@ -18,6 +19,14 @@ export async function init(httpServer: any) {
     io.on('connection', (socket: any) => {
         console.log('Client connected');
         newSocketConnection(socket)
+    });
+
+    sub(internal_events.ROOM_UPDATED,(room : Room)=>{
+        io.broadcast.to(room.Id).emit(allEvents.updateRoom, room)
+    })
+
+    sub(internal_events.ERROR, (error : any)=>{
+        io.broadcast.emit(allEvents.error, error)
     });
 }
 
@@ -40,11 +49,7 @@ function newSocketConnection(socket: any) {
         io.to(currentRoom).emit(allEvents.leave, {id: socket.id})
         console.log(`${socket.conn.remoteAddress} disconnected`);
     });
-    
-    sub(internal_events.ERROR, (error : any)=>{
-        io.broadcast.emit(allEvents.error, error)
-    });
 
-    userInteractions.applyEvents(socket,currentRoom)
+    userInteractions.setupClientEvents(socket,currentRoom)
 }
 

@@ -35,10 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
-exports.removeRoom = exports.saveRoom = exports.getRoom = exports.saveRooms = exports.getRooms = void 0;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.removeItem = exports.getItem = exports.saveItem = void 0;
 var persist = require("node-persist");
 var events_1 = require("./events");
+var allEvents_1 = require("./Constants/allEvents");
 var ready = false;
 var isDequeuingJobs = false;
 var jobQueue = [];
@@ -100,67 +101,45 @@ function safeRemove(id) {
         });
     });
 }
-function getRooms() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, safeGet('rooms')];
-                case 1: return [2, _a.sent()];
-            }
-        });
-    });
-}
-exports.getRooms = getRooms;
-function saveRooms(roomIds) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, safeSet('rooms', roomIds)];
-                case 1: return [2, _a.sent()];
-            }
-        });
-    });
-}
-exports.saveRooms = saveRooms;
-function getRoom(id) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, safeGet('room-' + id)];
-                case 1: return [2, _a.sent()];
-            }
-        });
-    });
-}
-exports.getRoom = getRoom;
-function saveRoom(room) {
+function saveItem(item) {
     return __awaiter(this, void 0, void 0, function () {
         var e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4, safeSet('room-' + room.id, room)];
+                    return [4, safeSet('item-' + item.id, item)];
                 case 1: return [2, _a.sent()];
                 case 2:
                     e_1 = _a.sent();
-                    (0, events_1.send)(events_1.On.ERROR, e_1);
+                    (0, events_1.send)(allEvents_1.default.ERROR, e_1);
                     return [3, 3];
                 case 3: return [2];
             }
         });
     });
 }
-exports.saveRoom = saveRoom;
-function removeRoom(id) {
+exports.saveItem = saveItem;
+function getItem(item) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4, safeRemove('room-' + id)];
+                case 0: return [4, safeGet('item-' + item.id)];
                 case 1: return [2, _a.sent()];
             }
         });
     });
 }
-exports.removeRoom = removeRoom;
+exports.getItem = getItem;
+function removeItem(id) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, safeRemove(id)];
+                case 1: return [2, _a.sent()];
+            }
+        });
+    });
+}
+exports.removeItem = removeItem;
 //# sourceMappingURL=storage.js.map

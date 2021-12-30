@@ -3,9 +3,16 @@ import Player from "../Domain/Player";
 
 let allPlayers: any = {}
 
-export function createPlayer() {
+export function getAllPlayers() {
+    return allPlayers
+}
+
+export function createPlayer(name : string) {
     let player = new Player(newUniqueId(8))
     allPlayers[player.Id] = player
+    
+    player.Name = name
+    
     return player
 }
 
@@ -24,6 +31,10 @@ export function getPlayer(playerId: string) {
         throw `player #${playerId} not found`
 
     return allPlayers[playerId]
+}
+
+export function findPlayer(name :string){
+    return allPlayers.find((p:Player) => p.Name == name)
 }
 
 export function savePlayer(player: Player) {

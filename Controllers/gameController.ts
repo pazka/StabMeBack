@@ -27,6 +27,7 @@ export function addPlayerToRoom(room: Room, player: Player, password: string): R
     player.HP = getConfig("defaultStartHP")
     player.Range = getConfig("defaultStartRange")
     player.AP = getConfig("defaultStartAP")
+    player.Pos = [Math.floor(Math.random()*room.Size),Math.floor(Math.random()*room.Size)]
 
     room.Players.push(player)
     player.RoomId = room.Id

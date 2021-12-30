@@ -20,6 +20,10 @@ export function createRoom(password: string = '',APDropInterval : number = null)
     return room
 }
 
+export function getAllRooms() {
+    return allRooms
+}
+
 export function getRoom(id: string) {
     if (!Object.keys(allRooms).includes(id)) {
         throw `room#${id} not found for fetching`

@@ -6,7 +6,6 @@ import * as express from 'express'
 const router = express.Router()
 
 import {isFormatValid, validFormats, writeFile} from "../Controllers/fileController";
-import * as itemController from '../Controllers/itemController'
 
 
 const upload = multer({

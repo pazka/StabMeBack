@@ -1,6 +1,6 @@
 ﻿import allEvents from "./allEvents";
 
-export function applyEvents(socket : any,currentRoom : string){
+export function setupClientEvents(socket : any, currentRoom : string){
 
     socket.on(allEvents.join, async (roomId: string) => {
         currentRoom = roomId
