@@ -14,11 +14,11 @@ function initConfig(filepath) {
 exports.initConfig = initConfig;
 function parseEnvironmentVars(env) {
     Object.keys(env).forEach(function (key) {
-        if (typeof env[key] == "object") {
+        if (typeof env[key] == "object" && !Array.isArray(env[key])) {
             env[key] = parseEnvironmentVars(env[key]);
         }
-        if (typeof env[key] == "string" && env[key].match("^\$\{(.*)\}$")) {
-            var envVarName = env[key].match("^\$\{(.*)\}$")[0];
+        if (typeof env[key] == "string" && env[key].match(/^\${(.*)}$/)) {
+            var envVarName = env[key].match(/^\${(.*)}$/)[0];
             if (!Object.keys(process.env).includes(envVarName)) {
                 throw "".concat(envVarName, " not found in environment variables");
             }
@@ -31,7 +31,7 @@ function parseEnvironmentVars(env) {
 }
 function getConfig(key) {
     if (key === void 0) { key = ''; }
-    if (key.trim() != "" && !key.match('(\w\.?)*'))
+    if (key.trim() != "" && !key.match(/(\w\.?)*/))
         throw "Key invalid, must in the format 'key1.key2...' or be null";
     var tmpEnv = env;
     if (key.trim() == "")

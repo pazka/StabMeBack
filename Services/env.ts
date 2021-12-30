@@ -17,11 +17,11 @@ export function initConfig(filepath: string) {
 
 function parseEnvironmentVars(env: any) {
     Object.keys(env).forEach(key => {
-        if (typeof env[key] == "object") {
+        if (typeof env[key] == "object" && !Array.isArray(env[key])) {
             env[key] = parseEnvironmentVars(env[key])
         }
-        if (typeof env[key] == "string" && env[key].match("^\$\{(.*)\}$")) {
-            const envVarName = env[key].match("^\$\{(.*)\}$")[0]
+        if (typeof env[key] == "string" && env[key].match(/^\${(.*)}$/)) {
+            const envVarName = env[key].match(/^\${(.*)}$/)[0]
             if (!Object.keys(process.env).includes(envVarName)) {
                 throw `${envVarName} not found in environment variables`
             } else {
@@ -34,7 +34,7 @@ function parseEnvironmentVars(env: any) {
 }
 
 export function getConfig(key: string = '') {
-    if (key.trim() != "" && !key.match('(\w\.?)*'))
+    if (key.trim() != "" && !key.match(/(\w\.?)*/))
         throw "Key invalid, must in the format 'key1.key2...' or be null"
 
     let tmpEnv: any = env
