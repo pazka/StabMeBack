@@ -58,7 +58,7 @@ function init(httpServer) {
                 newSocketConnection(socket);
             });
             (0, events_1.sub)(allEvents_2.default.ROOM_UPDATED, function (room) {
-                io.broadcast.to(room.Id).emit(allEvents_1.default.updateRoom, room);
+                io.to(room.Id).emit(allEvents_1.default.updateRoom, room);
             });
             (0, events_1.sub)(allEvents_2.default.ERROR, function (error) {
                 io.broadcast.emit(allEvents_1.default.error, error);

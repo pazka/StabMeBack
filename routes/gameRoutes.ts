@@ -1,4 +1,4 @@
-﻿import {requirePlayerCreated, requireRoomJoined} from "../Services/authentication";
+﻿import {requireAdmin, requirePlayerCreated, requireRoomJoined} from "../Services/authentication";
 import {getPlayer} from "../Controllers/playerController";
 import router from "./playerRoutes";
 import Player from "../Domain/Player";
@@ -7,8 +7,22 @@ import IClientSession from "../Services/Constants/IClientSession";
 import GameAction, {GameActionType} from "../Domain/GameAction";
 import {executePlayerAction} from "../Controllers/gameController";
 import {body} from "express-validator";
-import {send} from "../Services/events";
-import internal_events from "../Services/Constants/allEvents";
+
+
+router.post('/admin/:roomid',requireAdmin,
+    (req, res, next) => {
+            // @ts-ignore
+            const room: Room = getPlayer(req.params.roomId)
+
+            const gameAction: GameAction = new GameAction()
+            gameAction.Caster = getPlayer(req.body.Caster)
+            gameAction.Type = req.body.Type
+            gameAction.Receiver = getPlayer(req.body.Receiver)
+            gameAction.Params = req.body.Params
+
+            executePlayerAction(room, gameAction)
+    }
+)
 
 router.post('/shoot',
     requirePlayerCreated,

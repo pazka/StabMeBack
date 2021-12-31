@@ -22,7 +22,7 @@ export async function init(httpServer: any) {
     });
 
     sub(internal_events.ROOM_UPDATED,(room : Room)=>{
-        io.broadcast.to(room.Id).emit(allEvents.updateRoom, room)
+        io.to(room.Id).emit(allEvents.updateRoom, room)
     })
 
     sub(internal_events.ERROR, (error : any)=>{

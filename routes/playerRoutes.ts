@@ -52,7 +52,7 @@ router.post('/login',
         try {
             player = getPlayer(req.body.playerId)
         } catch (err) {
-            return res.status(400).send(err)
+            return res.status(400).send(err.message)
         }
 
         if (session.playerId != player.Id) {

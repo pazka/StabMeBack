@@ -20,7 +20,7 @@ export function addPlayerToRoom(room: Room, player: Player, password: string): R
         return
     }
 
-    if (room.Players.length >= room.maxPlayers) {
+    if (room.Players.length >= room.MaxPlayers) {
         throw "Room is full"
     }
 

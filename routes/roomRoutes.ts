@@ -1,22 +1,30 @@
 ﻿import * as express from "express";
-import {send, sub} from "../Services/events";
+import {sub} from "../Services/events";
 import internal_events from "../Services/Constants/allEvents";
 import {addPlayerToRoom, triggerRoomApDrop} from "../Controllers/gameController";
-import {createRoom, getAllRooms, getRoom} from "../Controllers/roomController";
+import {createRoom, getAllRooms, getRoom, saveRoom} from "../Controllers/roomController";
 import {body} from "express-validator";
 import Room from "../Domain/Room";
 import {requireAdmin, requireRoomJoined} from "../Services/authentication";
 import IClientSession from "../Services/Constants/IClientSession";
 import {getPlayer} from "../Controllers/playerController";
 import Player from "../Domain/Player";
+import {getConfig} from "../Services/env";
 
 const router = express.Router()
 
 
-router.get('/:roomId/admin',
+router.get('/admin/:roomId',
     requireAdmin,
     (req, res, next) => {
         res.send(getRoom(req.params.roomId))
+    }
+)
+router.post('/admin/:roomId',
+    requireAdmin,
+    (req, res, next) => {
+        saveRoom(req.body)
+        res.send("OK")
     }
 )
 
@@ -31,19 +39,33 @@ router.get('/all',
 
 router.post('/create',
     body('password').default('').trim().escape(),
-    body('dropInterval').default(3).trim().escape().isNumeric(),
+    body('dropInterval').default(getConfig("DefaultValues.APDropInterval")).trim().escape().isNumeric(),
+    body('dropAmount').default(getConfig("DefaultValues.APDropAmount")).trim().escape().isNumeric(),
+    body('startAP').default(getConfig("DefaultValues.startAP")).trim().escape().isNumeric(),
+    body('startHP').default(getConfig("DefaultValues.startHP")).trim().escape().isNumeric(),
+    body('startRange').default(getConfig("DefaultValues.startRange")).trim().escape().isNumeric(),
+    body('maxPlayers').default(getConfig("DefaultValues.maxPlayers")).trim().escape().isNumeric(),
+    body('roomSize').default(getConfig("DefaultValues.roomSize")).trim().escape().isNumeric(),
     (req, res, next) => {
         try {
-            const room = createRoom(req.body.password, req.body.dropInterval)
+            const room = createRoom(
+                req.body.password, 
+                req.body.dropInterval,
+                req.body.dropAmount,
+                req.body.startAP,
+                req.body.startHP,
+                req.body.startRange,
+                req.body.maxPlayers,
+                req.body.roomSize)
             res.send(room)
         } catch (err) {
-            res.status(403).send(err)
+            res.status(403).send(err.message)
         }
     }
 )
 
 
-router.post('/:roomId/join',
+router.post('/join/:roomId',
     body('password').default('').trim().escape(),
     (req, res, next) => {
         let room: Room
@@ -64,7 +86,7 @@ router.post('/:roomId/join',
         try {
             player = getPlayer(session.playerId)
         } catch (err) {
-            return res.status(403).send({message: "Error when getting player", error: err})
+            return res.status(401).send({message: "Error when getting player", error: err})
         }
 
         try {
@@ -79,7 +101,6 @@ router.post('/:roomId/join',
     }
 )
 
-
 router.get('/:roomId',
     requireRoomJoined,
     (req, res, next) => {
@@ -88,7 +109,7 @@ router.get('/:roomId',
         try {
             room = getRoom(req.params.roomId)
         } catch (err) {
-            return res.status(403).send(err)
+            return res.status(403).send(err.message)
         }
 
         res.send(room)
@@ -97,8 +118,7 @@ router.get('/:roomId',
 
 // @ts-ignore
 sub(internal_events.ROOM_AP_DROP, (data: IEventApDrop) => {
-    triggerRoomApDrop(data.room, data.room.APDropNb)
-    send(internal_events.ROOM_UPDATED, data.room)
+    triggerRoomApDrop(data.room, data.room.APDropAmount)
 })
 
 export default router

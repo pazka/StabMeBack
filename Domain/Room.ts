@@ -4,17 +4,21 @@ import GameAction from "./GameAction";
 import {send} from "../Services/events";
 import internal_events from "../Services/Constants/allEvents";
 
+const allApDropTriggers : any= {}
+
 export default class Room extends TimeStamped{
     Id : string
     Players: Player[] = []
     History: GameAction [] = []
-    Size : 20
-    maxPlayers : 8
+    Size : number = 20
+    MaxPlayers : number =  8
     Password: string = ""
-    APDropNb : number = 1
+    APDropAmount : number = 1
     LastAPDropDate : number
+    StartAP : number
+    StartHP : number
+    StartRange : number
     private APDropInterval : number // in minutes
-    __APDropTrigger : any
     
     constructor(id:string) {
         super("room_"+id);
@@ -29,16 +33,19 @@ export default class Room extends TimeStamped{
         send(internal_events.OBJECT_IS_ACTIVE, this.Id)
     }
 
-    getDropInterval(){
+    public get DropInterval(){
         return this.APDropInterval
     }
     
-    setDropInterval(newAPDropInterval : number){
+    public set DropInterval(newAPDropInterval : number){
         this.APDropInterval = newAPDropInterval
-        if(this.__APDropTrigger)
-            clearInterval(this.__APDropTrigger)
+        if(allApDropTriggers[this.Id])
+            clearInterval(allApDropTriggers[this.Id])
 
-        this.__APDropTrigger = setInterval(()=>{
+        if(!newAPDropInterval)
+            return
+
+        allApDropTriggers[this.Id] = setInterval(()=>{
             send(internal_events.ROOM_AP_DROP,{room : this})
         },this.APDropInterval * 60 * 1000)
     }

@@ -1,19 +1,31 @@
 ﻿import logger from "../Services/logger";
-import {removePlayer} from "./playerController";
 import Room from "../Domain/Room";
 import {getConfig} from "../Services/env";
 
 let allRooms: any = {}
 
-export function createRoom(password: string = '',APDropInterval : number = null) {
+export function createRoom(password: string = "",
+                           APDropInterval: number = getConfig("DefaultValues.APDropInterval"),
+                           APDropAmount: number = getConfig("DefaultValues.APDropAmount"),
+                           startAP: number = getConfig("DefaultValues.startAP"),
+                           startHP: number = getConfig("DefaultValues.startHP"),
+                           startRange: number = getConfig("DefaultValues.startRange"),
+                           roomSize: number = getConfig("DefaultValues.roomSize"),
+                           maxPlayers: number = getConfig("DefaultValues.maxPlayers")) {
     let room = new Room(newUniqueId(8))
     allRooms[room.Id] = room
     
     room.Password = password
-    room.setDropInterval(APDropInterval ?? getConfig("DefaultValues.APDropInterval"))
+    room.DropInterval = APDropInterval
+    room.APDropAmount = APDropAmount
     room.LastAPDropDate = Date.now()
-    
-    logger.log(`Created room#${room.Id}/DAP=${room.getDropInterval()}`)
+    room.StartAP = startAP
+    room.StartHP = startHP
+    room.StartRange = startRange
+    room.Size = roomSize
+    room.MaxPlayers = maxPlayers
+
+    logger.log(`Created room#${room.Id}/DAP=${room.DropInterval}`)
     return room
 }
 
@@ -45,11 +57,11 @@ export function removeRoom(id: string) {
     delete allRooms[id]
 }
 
-export function cleanUpRooms(){
-    const entityTTL = getConfig("Entity.TTL") 
-    const idsToRemove : any = []
-    
-    Object.values(allRooms).forEach((room : Room) => {
+export function cleanUpRooms() {
+    const entityTTL = getConfig("Entity.TTL")
+    const idsToRemove: any = []
+
+    Object.values(allRooms).forEach((room: Room) => {
         if (Date.now() - room.LastActive > (entityTTL * 1000)) {
             idsToRemove.push(room.Id)
         }
@@ -58,7 +70,7 @@ export function cleanUpRooms(){
     idsToRemove.forEach(removeRoom)
 }
 
-const cleanup_interval = setInterval(cleanUpRooms,getConfig("Entity.CleanupInterval")*1000)
+const cleanup_interval = setInterval(cleanUpRooms, getConfig("Entity.CleanupInterval") * 1000)
 
 function newUniqueId(l: number): string {
     const cs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
