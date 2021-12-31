@@ -6,8 +6,13 @@ import {createPlayer, findPlayer, getAllPlayers, getPlayer, savePlayer} from "..
 import {requireAdmin, requirePlayerCreated} from "../Services/authentication";
 import Room from "../Domain/Room";
 import {getAllRooms, getRoom} from "../Controllers/roomController";
+import {send} from "../Services/events";
+import internal_events from "../Services/Constants/allEvents";
+import adminPlayerRoutes from "./adminPlayerRoutes";
 
 const router = express.Router()
+
+router.use('/admin',adminPlayerRoutes)
 
 router.get('/me', requirePlayerCreated,(req, res, next) => {
     // @ts-ignore
@@ -15,43 +20,9 @@ router.get('/me', requirePlayerCreated,(req, res, next) => {
     const playerId: string = session.playerId
     let player: Player = getPlayer(playerId)
 
+    send(internal_events.OBJECT_IS_ACTIVE,playerId)
     res.send(player)
 })
-
-router.get('/:playerId/admin',
-    requireAdmin,
-    (req, res, next) => {
-        res.send(getPlayer(req.params.playerId))
-    }
-)
-
-router.post('/:playerId/admin/edit',
-    requireAdmin,
-    (req, res, next) => {
-        let player : Player = getPlayer(req.body.Id)      
-        if(!player){
-            player = new Player(req.body.Id)
-        }
-        player.HP = req.body.HP ?? player.HP
-        player.Range = req.body.Range ?? player.Range
-        player.AP = req.body.AP ?? player.AP
-        player.Name = req.body.Name ?? player.Name
-        player.Pos = req.body.Pos ?? player.Pos
-        player.RoomId = req.body.RoomId ?? player.RoomId
-        
-        res.send(savePlayer(player))
-        return player
-    }
-)
-
-
-
-router.get('/all',
-    requireAdmin,
-    (req, res, next) => {
-        res.send(getAllPlayers())
-    }
-)
 
 router.post('/create',
     body('name').trim().escape().notEmpty().isLength({min: 4, max: 25}),
@@ -88,6 +59,7 @@ router.post('/login',
             return res.status(400).send("Bad playerId")
         }
 
+        send(internal_events.OBJECT_IS_ACTIVE,player.Id)
         session.playerId = player.Id
         res.send(player)
     })

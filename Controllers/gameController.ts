@@ -24,9 +24,9 @@ export function addPlayerToRoom(room: Room, player: Player, password: string): R
         throw "Room is full"
     }
 
-    player.HP = getConfig("defaultStartHP")
-    player.Range = getConfig("defaultStartRange")
-    player.AP = getConfig("defaultStartAP")
+    player.HP = getConfig("DefaultValues.StartHP")
+    player.Range = getConfig("DefaultValues.StartRange")
+    player.AP = getConfig("DefaultValues.StartAP")
     player.Pos = [Math.floor(Math.random()*room.Size),Math.floor(Math.random()*room.Size)]
 
     room.Players.push(player)

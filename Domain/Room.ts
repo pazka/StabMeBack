@@ -23,6 +23,10 @@ export default class Room extends TimeStamped{
     increaseHistory(gameAction : GameAction){
         gameAction.Id = this.History.length
         this.History.push(gameAction)
+
+        send(internal_events.OBJECT_IS_ACTIVE, gameAction.Caster?.Id)
+        send(internal_events.OBJECT_IS_ACTIVE, gameAction.Receiver?.Id)
+        send(internal_events.OBJECT_IS_ACTIVE, this.Id)
     }
     
     resetDropInterval(newAPDropInterval : number){

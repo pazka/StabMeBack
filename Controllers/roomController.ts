@@ -45,13 +45,11 @@ export function removeRoom(id: string) {
         throw `room#${id} not found for removal`
     }
 
-    let room: Room = allRooms[id]
-    room.Players.forEach(p => removePlayer(p.Id))
     delete allRooms[id]
 }
 
 export function cleanUpRooms(){
-    const entityTTL = getConfig("EntityTTL") 
+    const entityTTL = getConfig("Entity.TTL") 
     const idsToRemove : any = []
     
     Object.values(allRooms).forEach((room : Room) => {
@@ -63,6 +61,8 @@ export function cleanUpRooms(){
     idsToRemove.forEach(removeRoom)
 }
 
+const cleanup_interval = setInterval(cleanUpRooms,getConfig("Entity.CleanupInterval")*1000)
+
 function newUniqueId(l: number): string {
     const cs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let newId = new Array(l).fill(0).map(x => cs[Math.floor(Math.random() *
@@ -70,3 +70,4 @@ function newUniqueId(l: number): string {
 
     return Object.keys(allRooms).includes(newId) ? newUniqueId(l) : newId
 }
+

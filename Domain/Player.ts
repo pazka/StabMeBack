@@ -4,7 +4,6 @@ export default class Player extends TimeStamped{
     HP: number = 3
     Range: number = 3
     AP: number = 1
-    Id: string
     Name: string
     Pos : number[]
     RoomId : string

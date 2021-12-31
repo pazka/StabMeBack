@@ -1,5 +1,10 @@
 ﻿import logger from "../Services/logger";
 import Player from "../Domain/Player";
+import {send} from "../Services/events";
+import internal_events from "../Services/Constants/allEvents";
+import {getConfig} from "../Services/env";
+import Room from "../Domain/Room";
+import {removeRoom} from "./roomController";
 
 let allPlayers: any = {}
 
@@ -25,6 +30,21 @@ export function removePlayer(id: string) {
     delete allPlayers[id]
 }
 
+export function cleanUpPlayers(){
+    const entityTTL = getConfig("Entity.TTL")
+    const idsToRemove : any = []
+
+    Object.values(allPlayers).forEach((room : Room) => {
+        if (Date.now() - room.LastActive > (entityTTL * 1000)) {
+            idsToRemove.push(room.Id)
+        }
+    })
+
+    idsToRemove.forEach(removeRoom)
+}
+
+const cleanup_interval = setInterval(cleanUpPlayers,getConfig("Entity.CleanupInterval")*2000)
+
 
 export function getPlayer(playerId: string) {
     if (!Object.keys(allPlayers).includes(playerId))
@@ -41,6 +61,7 @@ export function savePlayer(player: Player) {
     if (!Object.keys(allPlayers).includes(player.Id))
         throw `player[${player.Name}]#${player.Id} not found for saving`
 
+    send(internal_events.OBJECT_IS_ACTIVE,player.Id)
     allPlayers[player.Id] = player
 }
 

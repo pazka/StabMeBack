@@ -7,6 +7,8 @@ import IClientSession from "../Services/Constants/IClientSession";
 import GameAction, {GameActionType} from "../Domain/GameAction";
 import {executePlayerAction} from "../Controllers/gameController";
 import {body} from "express-validator";
+import {send} from "../Services/events";
+import internal_events from "../Services/Constants/allEvents";
 
 router.post('/shoot',
     requirePlayerCreated,
@@ -24,8 +26,8 @@ router.post('/shoot',
         //getting params
         gameAction.Receiver = getPlayer(req.body.targetId)
         gameAction.Params = req.body.amount ?? 1
-        
-        executePlayerAction(room,gameAction)
+
+        executePlayerAction(room, gameAction)
     }
 )
 
@@ -46,7 +48,7 @@ router.post('/give',
         gameAction.Receiver = getPlayer(req.body.targetId)
         gameAction.Params = req.body.amount ?? 1
 
-        executePlayerAction(room,gameAction)
+        executePlayerAction(room, gameAction)
     }
 )
 
@@ -66,14 +68,14 @@ router.post('/upgrade',
         //getting params
         gameAction.Params = req.body.amount ?? 1
 
-        executePlayerAction(room,gameAction)
+        executePlayerAction(room, gameAction)
     }
 )
 
 router.post('/move',
     requirePlayerCreated,
     requireRoomJoined,
-    body("dest").isArray({min:2,max:2}),
+    body("dest").isArray({min: 2, max: 2}),
     (req, res, next) => {
         // @ts-ignore
         const session: IClientSession = req.session
@@ -87,7 +89,8 @@ router.post('/move',
         //getting params
         gameAction.Params = req.body.dest
 
-        executePlayerAction(room,gameAction)
+        executePlayerAction(room, gameAction)
+        res.status(200).send(room)
     }
 )
 
