@@ -48,7 +48,7 @@ const cleanup_interval = setInterval(cleanUpPlayers,getConfig("Entity.CleanupInt
 
 export function getPlayer(playerId: string) : Player {
     if (!Object.keys(allPlayers).includes(playerId))
-        throw `player #${playerId} not found`
+        throw new Error(`player #${playerId} not found`)
 
     return allPlayers[playerId]
 }
@@ -60,7 +60,7 @@ export function findPlayer(name :string) : Player{
 
 export function savePlayer(player: Player): Player {
     if (!Object.keys(allPlayers).includes(player.Id))
-        throw `player[${player.Name}]#${player.Id} not found for saving`
+        throw new Error(`player[${player.Name}]#${player.Id} not found for saving`)
 
     send(internal_events.OBJECT_IS_ACTIVE,player.Id)
     allPlayers[player.Id] = player

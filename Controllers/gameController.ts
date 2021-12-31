@@ -13,7 +13,7 @@ GamePlayer.Name = "Game"
 
 export function addPlayerToRoom(room: Room, player: Player, password: string): Room {
     if (password != room.Password)
-        throw "Bad password"
+        throw new Error(`Bad password`)
 
     if (room.Players.findIndex((p) => p.Id == player.Id) != -1) {
         logger.warn(`player[${player.Name}]#${player.Id} already in room`)
@@ -21,7 +21,7 @@ export function addPlayerToRoom(room: Room, player: Player, password: string): R
     }
 
     if (room.Players.length >= room.MaxPlayers) {
-        throw "Room is full"
+        throw new Error(`Room is full`)
     }
 
     player.HP = room.StartHP
@@ -54,10 +54,10 @@ export function executePlayerAction(room: Room, action: GameAction) {
     const player = action.Caster
 
     if (room.Players.findIndex(p => p.Id == player.Id) < 0)
-        throw `Caster [${player.Name}]#${player.Id} not in room`
+        throw new Error(`Caster [${player.Name}]#${player.Id} not in room`)
 
     if (action.Receiver && room.Players.findIndex(p => p.Id == action.Receiver.Id) < 0)
-        throw `Receiver [${action.Receiver.Name}]#${action.Receiver.Id} not in room`
+        throw new Error(`Receiver [${action.Receiver.Name}]#${action.Receiver.Id} not in room`)
 
     switch (action.Type) {
         case GameActionType.UPGRADE:
@@ -74,7 +74,7 @@ export function executePlayerAction(room: Room, action: GameAction) {
             break;
 
         default:
-            throw "Unknown action"
+            throw new Error(`Unknown action`)
     }
 
     room.increaseHistory(action)   
@@ -105,11 +105,11 @@ export function kickPlayerOfRoom(room: Room, player: Player) {
 
 export function _tryTransferAP(action: GameAction) {
     if (action.Caster.AP < action.Params) {
-        throw "Not enough AP"
+        throw new Error(`Not enough AP`)
     }
 
     if (playerDist(action.Caster, action.Receiver) > action.Caster.Range) {
-        throw "Not enough Caster Range"
+        throw new Error(`Not enough Caster Range`)
     }
 
     action.Caster.AP -= action.Params
@@ -119,17 +119,17 @@ export function _tryTransferAP(action: GameAction) {
 export function _tryShootPlayer(action: GameAction) {
     const dist = playerDist(action.Caster, action.Receiver)
     if (dist > action.Caster.Range) {
-        throw `Not enough Caster Range. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.Range}; Need=${dist}`
+        throw new Error(`Not enough Caster Range. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.Range}; Need=${dist}`)
     }
 
     if (action.Params > action.Caster.AP) {
-        throw `Not enough Caster AP. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.AP}; Need=${dist}`
+        throw new Error(`Not enough Caster AP. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.AP}; Need=${dist}`)
     }
 
     const finalAPUsed = Math.min(action.Receiver.HP, action.Params)
 
     if (action.Receiver.HP == 0) {
-        throw "Player already dead"
+        throw new Error(`Player already dead`)
     }
 
     action.Caster.AP -= finalAPUsed
@@ -139,16 +139,16 @@ export function _tryShootPlayer(action: GameAction) {
 
 export function _tryMovePlayer(room: Room, action: GameAction) {
     if (!Array.isArray(action.Params)) {
-        throw "bad parameters"
+        throw new Error(`bad parameters`)
     }
 
     const dist = getDistance(action.Caster.Pos, action.Params)
     if (dist > action.Caster.AP) {
-        throw `Not enough Caster AP. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.AP}; Need=${dist}`
+        throw new Error(`Not enough Caster AP. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.AP}; Need=${dist}`)
     }
 
     if (!room.isInBounds(action.Params))
-        throw "Out of bounds"
+        throw new Error(`Out of bounds`)
 
     action.Caster.AP -= getDistance(action.Caster.Pos, action.Params)
     action.Caster.Pos = action.Params

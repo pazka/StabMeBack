@@ -23,7 +23,7 @@ function parseEnvironmentVars(env: any) {
         if (typeof env[key] == "string" && env[key].match(/^\${(.*)}$/)) {
             const envVarName = env[key].match(/^\${(.*)}$/)[0]
             if (!Object.keys(process.env).includes(envVarName)) {
-                throw `${envVarName} not found in environment variables`
+                throw new Error(`${envVarName} not found in environment variables`)
             }
             
             env[key] = process.env[envVarName]
@@ -35,7 +35,7 @@ function parseEnvironmentVars(env: any) {
 
 export function getConfig(key: string = '') {
     if (key.trim() != "" && !key.match(/(\w\.?)*/))
-        throw "Key invalid, must in the format 'key1.key2...' or be null"
+        throw new Error(`Key invalid, must in the format 'key1.key2...' or be null`)
 
     let tmpEnv: any = env
 
@@ -45,7 +45,7 @@ export function getConfig(key: string = '') {
     key.split('.').forEach(k => {
         
         if (!Object.keys(tmpEnv).includes(k))
-            throw `${k} not found in current env`
+            throw new Error(`${k} not found in current env`)
 
         tmpEnv = tmpEnv[k]
     })

@@ -13,8 +13,8 @@ var api_1 = require("./Services/api");
 var sockets = require("./Services/sockets");
 var playerRoutes_1 = require("./routes/playerRoutes");
 var roomRoutes_1 = require("./routes/roomRoutes");
-var logger_1 = require("./Services/logger");
 var gameRoutes_1 = require("./routes/gameRoutes");
+var logger_1 = require("./Services/logger");
 var app = express();
 var httpServer = http.createServer(app);
 app.use(cors({

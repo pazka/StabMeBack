@@ -14,7 +14,7 @@ export default class Player extends TimeStamped{
     
     tryUpgradeRange(){
         if (this.AP > 1) {
-            throw `Not enough AP to upgrade player[${this.Name}]#${this.Id}`
+            throw new Error(`Not enough AP to upgrade player[${this.Name}]#${this.Id}`)
         }
 
         this.Range += 1

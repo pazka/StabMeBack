@@ -35,7 +35,7 @@ export function getAllRooms() {
 
 export function getRoom(id: string) : Room {
     if (!Object.keys(allRooms).includes(id)) {
-        throw `room#${id} not found for fetching`
+        throw new Error(`room#${id} not found for fetching`)
     }
 
     return allRooms[id]
@@ -43,7 +43,7 @@ export function getRoom(id: string) : Room {
 
 export function saveRoom(room: Room) {
     if (!Object.keys(allRooms).includes(room.Id)) {
-        throw `room#${room.Id} not found for update`
+        throw new Error(`room#${room.Id} not found for update`)
     }
 
     allRooms[room.Id] = room
@@ -51,7 +51,7 @@ export function saveRoom(room: Room) {
 
 export function removeRoom(id: string) {
     if (!Object.keys(allRooms).includes(id)) {
-        throw `room#${id} not found for removal`
+        throw new Error(`room#${id} not found for removal`)
     }
 
     delete allRooms[id]
