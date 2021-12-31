@@ -31,10 +31,10 @@ router.get('/all',
 
 router.post('/create',
     body('password').default('').trim().escape(),
-    body('propInterval').default(3).trim().escape().isNumeric(),
+    body('dropInterval').default(3).trim().escape().isNumeric(),
     (req, res, next) => {
         try {
-            const room = createRoom(req.body.password, req.body.propInterval)
+            const room = createRoom(req.body.password, req.body.dropInterval)
             res.send(room)
         } catch (err) {
             res.status(403).send(err)

@@ -10,13 +10,10 @@ export function createRoom(password: string = '',APDropInterval : number = null)
     allRooms[room.Id] = room
     
     room.Password = password
-    
-    if(!APDropInterval){
-        room.resetDropInterval(getConfig().DefaultAPDropInterval)
-    }
+    room.setDropInterval(APDropInterval ?? getConfig("DefaultValues.APDropInterval"))
     room.LastAPDropDate = Date.now()
     
-    logger.log(`Created room#${room.Id}/DAP=${room.APDropInterval}`)
+    logger.log(`Created room#${room.Id}/DAP=${room.getDropInterval()}`)
     return room
 }
 

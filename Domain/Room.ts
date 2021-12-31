@@ -13,7 +13,7 @@ export default class Room extends TimeStamped{
     Password: string = ""
     APDropNb : number = 1
     LastAPDropDate : number
-    APDropInterval : number // in minutes
+    private APDropInterval : number // in minutes
     __APDropTrigger : any
     
     constructor(id:string) {
@@ -28,8 +28,12 @@ export default class Room extends TimeStamped{
         send(internal_events.OBJECT_IS_ACTIVE, gameAction.Receiver?.Id)
         send(internal_events.OBJECT_IS_ACTIVE, this.Id)
     }
+
+    getDropInterval(){
+        return this.APDropInterval
+    }
     
-    resetDropInterval(newAPDropInterval : number){
+    setDropInterval(newAPDropInterval : number){
         this.APDropInterval = newAPDropInterval
         if(this.__APDropTrigger)
             clearInterval(this.__APDropTrigger)
