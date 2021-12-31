@@ -11,7 +11,7 @@ export function createRoom(password: string = "",
                            startHP: number = getConfig("DefaultValues.startHP"),
                            startRange: number = getConfig("DefaultValues.startRange"),
                            roomSize: number = getConfig("DefaultValues.roomSize"),
-                           maxPlayers: number = getConfig("DefaultValues.maxPlayers")) {
+                           maxPlayers: number = getConfig("DefaultValues.maxPlayers")) : Room {
     let room = new Room(newUniqueId(8))
     allRooms[room.Id] = room
     
@@ -33,7 +33,7 @@ export function getAllRooms() {
     return allRooms
 }
 
-export function getRoom(id: string) {
+export function getRoom(id: string) : Room {
     if (!Object.keys(allRooms).includes(id)) {
         throw `room#${id} not found for fetching`
     }

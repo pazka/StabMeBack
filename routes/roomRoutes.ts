@@ -39,13 +39,13 @@ router.get('/all',
 
 router.post('/create',
     body('password').default('').trim().escape(),
-    body('dropInterval').default(getConfig("DefaultValues.APDropInterval")).trim().escape().isNumeric(),
-    body('dropAmount').default(getConfig("DefaultValues.APDropAmount")).trim().escape().isNumeric(),
-    body('startAP').default(getConfig("DefaultValues.startAP")).trim().escape().isNumeric(),
-    body('startHP').default(getConfig("DefaultValues.startHP")).trim().escape().isNumeric(),
-    body('startRange').default(getConfig("DefaultValues.startRange")).trim().escape().isNumeric(),
-    body('maxPlayers').default(getConfig("DefaultValues.maxPlayers")).trim().escape().isNumeric(),
-    body('roomSize').default(getConfig("DefaultValues.roomSize")).trim().escape().isNumeric(),
+    body('dropInterval').default(getConfig("DefaultValues.APDropInterval")).isNumeric(),
+    body('dropAmount').default(getConfig("DefaultValues.APDropAmount")).isNumeric(),
+    body('startAP').default(getConfig("DefaultValues.startAP")).isNumeric(),
+    body('startHP').default(getConfig("DefaultValues.startHP")).isNumeric(),
+    body('startRange').default(getConfig("DefaultValues.startRange")).isNumeric(),
+    body('maxPlayers').default(getConfig("DefaultValues.maxPlayers")).isNumeric(),
+    body('roomSize').default(getConfig("DefaultValues.roomSize")).isNumeric(),
     (req, res, next) => {
         try {
             const room = createRoom(
@@ -76,7 +76,7 @@ router.post('/join/:roomId',
         try {
             room = getRoom(req.params.roomId)
         } catch (err) {
-            return res.status(403).send({message: "Room don't exist", error: err})
+            return res.status(403).send({message: "Room don't exist", error: err.message})
         }
 
         if (!session.playerId) {
@@ -86,13 +86,13 @@ router.post('/join/:roomId',
         try {
             player = getPlayer(session.playerId)
         } catch (err) {
-            return res.status(401).send({message: "Error when getting player", error: err})
+            return res.status(401).send({message: "Error when getting player", error: err.message})
         }
 
         try {
             addPlayerToRoom(room, player, req.body.password)
         } catch (err) {
-            return res.status(403).send({message: "Couldn't join room", error: err})
+            return res.status(403).send({message: "Couldn't join room", error: err.message})
         }
 
         // @ts-ignore

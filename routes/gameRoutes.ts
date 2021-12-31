@@ -7,20 +7,26 @@ import IClientSession from "../Services/Constants/IClientSession";
 import GameAction, {GameActionType} from "../Domain/GameAction";
 import {executePlayerAction} from "../Controllers/gameController";
 import {body} from "express-validator";
+import {getRoom} from "../Controllers/roomController";
 
 
-router.post('/admin/:roomid',requireAdmin,
+router.post('/admin/:roomId',requireAdmin,
     (req, res, next) => {
             // @ts-ignore
-            const room: Room = getPlayer(req.params.roomId)
+            const room: Room = getRoom(req.params.roomId)
 
             const gameAction: GameAction = new GameAction()
             gameAction.Caster = getPlayer(req.body.Caster)
             gameAction.Type = req.body.Type
             gameAction.Receiver = getPlayer(req.body.Receiver)
             gameAction.Params = req.body.Params
-
-            executePlayerAction(room, gameAction)
+    
+            try {
+                executePlayerAction(room, gameAction)
+            }catch (e) {
+                res.status(400).send({message : "couldn't execute action" , error : e.message})
+            }
+            res.status(200).send(room)
     }
 )
 
@@ -31,7 +37,7 @@ router.post('/shoot',
         // @ts-ignore
         const session: IClientSession = req.session
         const player: Player = getPlayer(session.playerId)
-        const room: Room = getPlayer(session.roomId)
+        const room: Room = getRoom(session.roomId)
 
         const gameAction: GameAction = new GameAction()
         gameAction.Caster = player
@@ -41,7 +47,12 @@ router.post('/shoot',
         gameAction.Receiver = getPlayer(req.body.targetId)
         gameAction.Params = req.body.amount ?? 1
 
-        executePlayerAction(room, gameAction)
+        try {
+            executePlayerAction(room, gameAction)
+        }catch (e) {
+            res.status(400).send({message : "couldn't execute action" , error : e.message})
+        }
+        res.status(200).send(room)
     }
 )
 
@@ -52,7 +63,7 @@ router.post('/give',
         // @ts-ignore
         const session: IClientSession = req.session
         const player: Player = getPlayer(session.playerId)
-        const room: Room = getPlayer(session.roomId)
+        const room: Room = getRoom(session.roomId)
 
         const gameAction: GameAction = new GameAction()
         gameAction.Caster = player
@@ -62,7 +73,12 @@ router.post('/give',
         gameAction.Receiver = getPlayer(req.body.targetId)
         gameAction.Params = req.body.amount ?? 1
 
-        executePlayerAction(room, gameAction)
+        try {
+            executePlayerAction(room, gameAction)
+        }catch (e) {
+            res.status(400).send({message : "couldn't execute action" , error : e.message})
+        }
+        res.status(200).send(room)
     }
 )
 
@@ -73,7 +89,7 @@ router.post('/upgrade',
         // @ts-ignore
         const session: IClientSession = req.session
         const player: Player = getPlayer(session.playerId)
-        const room: Room = getPlayer(session.roomId)
+        const room: Room = getRoom(session.roomId)
 
         const gameAction: GameAction = new GameAction()
         gameAction.Caster = player
@@ -82,7 +98,12 @@ router.post('/upgrade',
         //getting params
         gameAction.Params = req.body.amount ?? 1
 
-        executePlayerAction(room, gameAction)
+        try {
+            executePlayerAction(room, gameAction)
+        }catch (e) {
+            res.status(400).send({message : "couldn't execute action" , error : e.message})
+        }
+        res.status(200).send(room)
     }
 )
 
@@ -94,7 +115,7 @@ router.post('/move',
         // @ts-ignore
         const session: IClientSession = req.session
         const player: Player = getPlayer(session.playerId)
-        const room: Room = getPlayer(session.roomId)
+        const room: Room = getRoom(session.roomId)
 
         const gameAction: GameAction = new GameAction()
         gameAction.Caster = player
@@ -102,8 +123,12 @@ router.post('/move',
 
         //getting params
         gameAction.Params = req.body.dest
-
-        executePlayerAction(room, gameAction)
+        
+        try {
+            executePlayerAction(room, gameAction)
+        }catch (e) {
+            res.status(400).send({message : "couldn't execute action" , error : e.message})
+        }
         res.status(200).send(room)
     }
 )

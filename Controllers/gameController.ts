@@ -15,7 +15,7 @@ export function addPlayerToRoom(room: Room, player: Player, password: string): R
     if (password != room.Password)
         throw "Bad password"
 
-    if (room.Players.findIndex((p) => p.Id == player.Id)) {
+    if (room.Players.findIndex((p) => p.Id == player.Id) != -1) {
         logger.warn(`player[${player.Name}]#${player.Id} already in room`)
         return
     }
@@ -24,9 +24,9 @@ export function addPlayerToRoom(room: Room, player: Player, password: string): R
         throw "Room is full"
     }
 
-    player.HP = getConfig("DefaultValues.StartHP")
-    player.Range = getConfig("DefaultValues.StartRange")
-    player.AP = getConfig("DefaultValues.StartAP")
+    player.HP = room.StartHP
+    player.Range = room.StartRange
+    player.AP = room.StartAP
     player.Pos = [Math.floor(Math.random()*room.Size),Math.floor(Math.random()*room.Size)]
 
     room.Players.push(player)

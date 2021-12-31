@@ -12,7 +12,7 @@ export function getAllPlayers() {
     return allPlayers
 }
 
-export function createPlayer(name : string) {
+export function createPlayer(name : string): Player {
     let player = new Player(newUniqueId(8))
     allPlayers[player.Id] = player
     
@@ -46,18 +46,19 @@ export function cleanUpPlayers(){
 const cleanup_interval = setInterval(cleanUpPlayers,getConfig("Entity.CleanupInterval")*2000)
 
 
-export function getPlayer(playerId: string) {
+export function getPlayer(playerId: string) : Player {
     if (!Object.keys(allPlayers).includes(playerId))
         throw `player #${playerId} not found`
 
     return allPlayers[playerId]
 }
 
-export function findPlayer(name :string){
+export function findPlayer(name :string) : Player{
+    //@ts-ignore
     return Object.values(allPlayers).find((p:Player) => p.Name == name)
 }
 
-export function savePlayer(player: Player) {
+export function savePlayer(player: Player): Player {
     if (!Object.keys(allPlayers).includes(player.Id))
         throw `player[${player.Name}]#${player.Id} not found for saving`
 

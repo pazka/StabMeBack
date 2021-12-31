@@ -24,9 +24,9 @@ function parseEnvironmentVars(env: any) {
             const envVarName = env[key].match(/^\${(.*)}$/)[0]
             if (!Object.keys(process.env).includes(envVarName)) {
                 throw `${envVarName} not found in environment variables`
-            } else {
-                env[key] = process.env[envVarName]
             }
+            
+            env[key] = process.env[envVarName]
         }
     })
 

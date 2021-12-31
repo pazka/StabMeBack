@@ -22,9 +22,7 @@ function parseEnvironmentVars(env) {
             if (!Object.keys(process.env).includes(envVarName)) {
                 throw "".concat(envVarName, " not found in environment variables");
             }
-            else {
-                env[key] = process.env[envVarName];
-            }
+            env[key] = process.env[envVarName];
         }
     });
     return env;
