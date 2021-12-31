@@ -37,21 +37,24 @@ export function addPlayerToRoom(room: Room, player: Player, password: string): R
 
 export function triggerRoomApDrop(room: Room, nb: number) {
     room.Players.forEach(player => {
+        
         const action = new GameAction()
         action.Type = GameActionType.GIVE_AP
         action.Caster = GamePlayer
         action.Receiver = player
         action.Params = nb
+        action.saveInitState()
 
         player.AP += nb
-
-        room.increaseHistory(action)
+        
+        room.increaseHistoryRaw(action)
     })
     room.LastAPDropDate = Date.now()
 }
 
 export function executePlayerAction(room: Room, action: GameAction) {
     const player = action.Caster
+    action.saveInitState()
 
     if (room.Players.findIndex(p => p.Id == player.Id) < 0)
         throw new Error(`Caster [${player.Name}]#${player.Id} not in room`)
@@ -119,11 +122,11 @@ export function _tryTransferAP(action: GameAction) {
 export function _tryShootPlayer(action: GameAction) {
     const dist = playerDist(action.Caster, action.Receiver)
     if (dist > action.Caster.Range) {
-        throw new Error(`Not enough Caster Range. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.Range}; Need=${dist}`)
+        throw new Error(`Not enough Caster Range. [${action.Caster.Name}]#${action.Caster.Id}=${action.Caster.Range}; Need=${dist}`)
     }
 
     if (action.Params > action.Caster.AP) {
-        throw new Error(`Not enough Caster AP. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.AP}; Need=${dist}`)
+        throw new Error(`Not enough Caster AP. [${action.Caster.Name}]#${action.Caster.Id}=${action.Caster.AP}; Need=${dist}`)
     }
 
     const finalAPUsed = Math.min(action.Receiver.HP, action.Params)
@@ -144,12 +147,17 @@ export function _tryMovePlayer(room: Room, action: GameAction) {
 
     const dist = getDistance(action.Caster.Pos, action.Params)
     if (dist > action.Caster.AP) {
-        throw new Error(`Not enough Caster AP. ${action.Caster.Name}#${action.Caster.Id}=${action.Caster.AP}; Need=${dist}`)
+        throw new Error(`Not enough Caster AP. [${action.Caster.Name}]#${action.Caster.Id}=${action.Caster.AP}; Need=${dist}`)
     }
 
     if (!room.isInBounds(action.Params))
         throw new Error(`Out of bounds`)
 
+    const otherPlayer = room.Players.find((p:Player)=> p.Pos[0] == action.Params[0] && p.Pos[1] == action.Params[1])
+    if(otherPlayer){
+        throw new Error(`[${otherPlayer.Name}]#${otherPlayer.Id} already at ${action.Params}`)
+    }
+    
     action.Caster.AP -= getDistance(action.Caster.Pos, action.Params)
     action.Caster.Pos = action.Params
 }

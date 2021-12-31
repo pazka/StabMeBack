@@ -13,6 +13,12 @@ export default class GameAction{
     Receiver : Player
     Type : GameActionType
     Params : any
-    Id : number
-    Date : number = Date.now()
+    initState : string = ""
+        
+    constructor() {
+    }
+    
+    saveInitState(){
+        this.initState = JSON.stringify(this)
+    }
 }

@@ -20,7 +20,7 @@ function parseEnvironmentVars(env) {
         if (typeof env[key] == "string" && env[key].match(/^\${(.*)}$/)) {
             var envVarName = env[key].match(/^\${(.*)}$/)[0];
             if (!Object.keys(process.env).includes(envVarName)) {
-                throw "".concat(envVarName, " not found in environment variables");
+                throw new Error("".concat(envVarName, " not found in environment variables"));
             }
             env[key] = process.env[envVarName];
         }
@@ -30,13 +30,13 @@ function parseEnvironmentVars(env) {
 function getConfig(key) {
     if (key === void 0) { key = ''; }
     if (key.trim() != "" && !key.match(/(\w\.?)*/))
-        throw "Key invalid, must in the format 'key1.key2...' or be null";
+        throw new Error("Key invalid, must in the format 'key1.key2...' or be null");
     var tmpEnv = env;
     if (key.trim() == "")
         return tmpEnv;
     key.split('.').forEach(function (k) {
         if (!Object.keys(tmpEnv).includes(k))
-            throw "".concat(k, " not found in current env");
+            throw new Error("".concat(k, " not found in current env"));
         tmpEnv = tmpEnv[k];
     });
     return tmpEnv;

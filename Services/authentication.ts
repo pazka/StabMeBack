@@ -13,10 +13,10 @@ export const requireRoomJoined = (req: Request, res: Response, next: NextFunctio
     if (!req.params.roomId)
         return res.send(503).send("No room Id found in path to use for requirement")
 
-    if (session.roomId)
+    if (!session.roomId)
         return res.send(401).send("No room Id found in session to use for requirement")
 
-    if (session.playerId)
+    if (!session.playerId)
         return res.send(401).send("No playerId found in session to use for requirement")
 
     const room: Room = getRoom(session.roomId)
@@ -30,13 +30,13 @@ export const requirePlayerCreated= (req: Request, res: Response, next: NextFunct
     // @ts-ignore
     const session: IClientSession = req.session
     
-    if (session.playerId)
-        return res.send(401).send("No playerId found in session to use for requirement")
+    if (!session.playerId)
+        return res.status(401).send("No playerId found in session to use for requirement")
     
     try{
         getPlayer(session.playerId)
     }catch(err){
-        return res.send(401).send("Player unknown")
+        return res.status(401).send("Player unknown")
     }
 
     next()

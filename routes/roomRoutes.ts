@@ -2,10 +2,10 @@
 import {sub} from "../Services/events";
 import internal_events from "../Services/Constants/allEvents";
 import {addPlayerToRoom, triggerRoomApDrop} from "../Controllers/gameController";
-import {createRoom, getAllRooms, getRoom} from "../Controllers/roomController";
+import {createRoom, getAllRooms, getRoom, removeRoom} from "../Controllers/roomController";
 import {body} from "express-validator";
 import Room from "../Domain/Room";
-import {requireAdmin, requireRoomJoined} from "../Services/authentication";
+import {requireAdmin, requirePlayerCreated, requireRoomJoined} from "../Services/authentication";
 import IClientSession from "../Services/Constants/IClientSession";
 import {getPlayer} from "../Controllers/playerController";
 import Player from "../Domain/Player";
@@ -16,16 +16,17 @@ const router = express.Router()
 
 router.get('/admin', requireAdmin, adminRoomRoutes)
 
-router.get('/all',(req, res, next) => {
-    res.send(getAllRooms().map((room : Room)=>({
-        Id : room.Id,
-        NbPlayers : room.Players.length,
-        MaxPlayers : room.MaxPlayers,
-        DateCreated : room.DateCreated
+router.get('/all', (req, res, next) => {
+    res.send(getAllRooms().map((room: Room) => ({
+        Id: room.Id,
+        NbPlayers: room.Players.length,
+        MaxPlayers: room.MaxPlayers,
+        DateCreated: room.DateCreated
     })))
 })
 
 router.post('/create',
+    requirePlayerCreated,
     body('password').default('').trim().escape(),
     body('dropInterval').default(getConfig("DefaultValues.APDropInterval")).isNumeric(),
     body('dropAmount').default(getConfig("DefaultValues.APDropAmount")).isNumeric(),
@@ -35,6 +36,9 @@ router.post('/create',
     body('maxPlayers').default(getConfig("DefaultValues.maxPlayers")).isNumeric(),
     body('roomSize').default(getConfig("DefaultValues.roomSize")).isNumeric(),
     (req, res, next) => {
+        // @ts-ignore
+        const session: IClientSession = req.session
+        const player = getPlayer(session.playerId)
         try {
             const room = createRoom(
                 req.body.password,
@@ -45,10 +49,34 @@ router.post('/create',
                 req.body.startRange,
                 req.body.maxPlayers,
                 req.body.roomSize)
-            res.send(room)
+            room.Creator = player
+            return res.send(room)
         } catch (err) {
-            res.status(403).send(err.message)
+            return res.status(403).send(err.message)
         }
+    }
+)
+
+router.delete('/:roomId',
+    requirePlayerCreated,
+    (req, res, next) => {
+        let room: Room = getRoom(req.params.roomId)
+        
+        // @ts-ignore
+        const session: IClientSession = req.session
+        const player = getPlayer(session.playerId)
+
+        if(room.Creator.Id != player.Id){
+            return res.status(403).send({message: "Only the creator of the room can remove it"})
+        }
+        
+        try {
+            removeRoom(room.Id)
+        } catch (err) {
+            return res.status(400).send({message: "Error removing room", error: err.message})
+        }
+        
+        res.send("OK")
     }
 )
 
