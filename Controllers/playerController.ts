@@ -63,6 +63,8 @@ export function savePlayer(player: Player) {
 
     send(internal_events.OBJECT_IS_ACTIVE,player.Id)
     allPlayers[player.Id] = player
+    
+    return player
 }
 
 function newUniqueId(l: number): string {

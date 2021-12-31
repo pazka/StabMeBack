@@ -6,6 +6,11 @@ const router = express.Router()
 
 router.use('/*',requireAdmin)
 
+router.get('/all',(req, res, next) => {
+        res.send(getAllPlayers())
+    }
+)
+
 router.get('/:playerId',(req, res, next) => {
         res.send(getPlayer(req.params.playerId))
     }
@@ -24,12 +29,6 @@ router.post('/:playerId',(req, res, next) => {
         player.RoomId = req.body.RoomId ?? player.RoomId
 
         res.send(savePlayer(player))
-        return player
-    }
-)
-
-router.get('/all',(req, res, next) => {
-        res.send(getAllPlayers())
     }
 )
 

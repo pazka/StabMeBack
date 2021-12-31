@@ -3,7 +3,7 @@ import allEvents from "../Services/Constants/allEvents";
 import BaseObject from "./BaseObject";
 
 export default class TimeStamped extends BaseObject{
-    LastActive : number
+    LastActive : number = Date.now()
     
     constructor(id : string) {
         super(id)
