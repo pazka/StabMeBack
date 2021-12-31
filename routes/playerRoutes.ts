@@ -12,7 +12,7 @@ import adminPlayerRoutes from "./adminPlayerRoutes";
 
 const router = express.Router()
 
-router.use('/admin',adminPlayerRoutes)
+router.use('/admin',requireAdmin,adminPlayerRoutes)
 
 router.get('/me', requirePlayerCreated,(req, res, next) => {
     // @ts-ignore

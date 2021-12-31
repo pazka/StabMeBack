@@ -4,6 +4,7 @@ import BaseObject from "./BaseObject";
 
 export default class TimeStamped extends BaseObject{
     LastActive : number = Date.now()
+    DateCreated : number = Date.now()
     
     constructor(id : string) {
         super(id)

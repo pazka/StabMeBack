@@ -4,8 +4,6 @@ import Player from "../Domain/Player";
 import * as express from "express";
 const router = express.Router()
 
-router.use('/*',requireAdmin)
-
 router.get('/all',(req, res, next) => {
         res.send(getAllPlayers())
     }

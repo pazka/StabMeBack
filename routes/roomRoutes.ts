@@ -2,7 +2,7 @@
 import {sub} from "../Services/events";
 import internal_events from "../Services/Constants/allEvents";
 import {addPlayerToRoom, triggerRoomApDrop} from "../Controllers/gameController";
-import {createRoom, getAllRooms, getRoom, saveRoom} from "../Controllers/roomController";
+import {createRoom, getAllRooms, getRoom} from "../Controllers/roomController";
 import {body} from "express-validator";
 import Room from "../Domain/Room";
 import {requireAdmin, requireRoomJoined} from "../Services/authentication";
@@ -10,32 +10,20 @@ import IClientSession from "../Services/Constants/IClientSession";
 import {getPlayer} from "../Controllers/playerController";
 import Player from "../Domain/Player";
 import {getConfig} from "../Services/env";
+import adminRoomRoutes from "./adminRoomRoutes";
 
 const router = express.Router()
 
+router.get('/admin', requireAdmin, adminRoomRoutes)
 
-router.get('/admin/:roomId',
-    requireAdmin,
-    (req, res, next) => {
-        res.send(getRoom(req.params.roomId))
-    }
-)
-router.post('/admin/:roomId',
-    requireAdmin,
-    (req, res, next) => {
-        saveRoom(req.body)
-        res.send("OK")
-    }
-)
-
-
-router.get('/all',
-    requireAdmin,
-    (req, res, next) => {
-        res.send(getAllRooms())
-    }
-)
-
+router.get('/all',(req, res, next) => {
+    res.send(getAllRooms().map((room : Room)=>({
+        Id : room.Id,
+        NbPlayers : room.Players.length,
+        MaxPlayers : room.MaxPlayers,
+        DateCreated : room.DateCreated
+    })))
+})
 
 router.post('/create',
     body('password').default('').trim().escape(),
@@ -49,7 +37,7 @@ router.post('/create',
     (req, res, next) => {
         try {
             const room = createRoom(
-                req.body.password, 
+                req.body.password,
                 req.body.dropInterval,
                 req.body.dropAmount,
                 req.body.startAP,
@@ -63,7 +51,6 @@ router.post('/create',
         }
     }
 )
-
 
 router.post('/join/:roomId',
     body('password').default('').trim().escape(),

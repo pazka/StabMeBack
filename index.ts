@@ -13,8 +13,8 @@ import routes from './Services/api'
 import * as sockets from './Services/sockets'
 import playerRoutes from "./routes/playerRoutes"
 import roomRoutes from "./routes/roomRoutes";
-import logger from "./Services/logger";
 import gameRoutes from "./routes/gameRoutes";
+import logger from "./Services/logger";
 
 const app = express()
 const httpServer = http.createServer(app);
