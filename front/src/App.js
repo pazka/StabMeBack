@@ -11,11 +11,11 @@ const StyleWrapper = styled("div")(
     ({theme}) => `
   background-color: ${theme.background.level1};
   height : 100vh;
-  overflow : hidden;
+  overflow : hidden;ro
   width : 100%;
-  color : ${theme.palette.text.main};
+  --color : ${theme.palette.text.main};
   
-  svg : {
+  --svg : {
     fill : ${theme.palette.text.main};
   }
 `,

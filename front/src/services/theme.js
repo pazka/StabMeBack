@@ -1,6 +1,7 @@
 ﻿import {ThemeProvider} from "@mui/material";
 import {useState} from "react";
 import {On, sub} from "./events";
+import {connect} from "react-redux";
 
 const {createTheme} = require("@mui/material");
 
@@ -15,13 +16,18 @@ const themeWhite = createTheme({
     },
     palette: {
         text : {
-            main : "#13212A"
+            primary : "#13202A",
+            secondary : "#140F00",
+            disabled : "#37374a"
         },
         primary: {
-            main: "#578EB2",
+            main: "#46769B",
         },
         secondary: {
             main: "#fcca46",
+        },
+        disabled : {
+            main : "#C6DBE7"
         },
         error: {
             main: "#fe7f2d"
@@ -47,13 +53,18 @@ const themeBlack = createTheme({
     },
     palette: {
         text : {
-            main : "#E3ECF2"
+            primary : "#ABC5D9",
+            secondary : "#FEC29A",
+            disabled : "#37374a"
         },
         primary: {
-            main: "#81AAC5",
+            main: "#6494B9",
         },
         secondary: {
             main: "#8D4E01",
+        },
+        disabled : {
+            main : "#1A2C38"
         },
         error: {
             main: "#8E3901"
@@ -71,15 +82,16 @@ const themeBlack = createTheme({
 });
 
 
-export default function StabMeBackPalette(props) {
+function StabMeBackPalette(props) {
     const themes = [themeWhite,themeBlack]
-    let [themeId,setTheme] = useState(0)
-    
-    sub(On.ui_changeTheme,"themeComponent",()=>setTheme(themeId ? 0 : 1))
     
     return (
-        <ThemeProvider theme={themes[themeId]}>
+        <ThemeProvider theme={themes[props.userPref.theme]}>
             {props.children}
         </ThemeProvider>
     );
 }
+
+export default connect(state => ({
+    userPref: state.userPref,
+}))(StabMeBackPalette)
