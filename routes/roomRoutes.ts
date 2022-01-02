@@ -21,7 +21,8 @@ router.get('/all', (req, res, next) => {
         Id: room.Id,
         NbPlayers: room.Players.length,
         MaxPlayers: room.MaxPlayers,
-        DateCreated: room.DateCreated
+        DateCreated: room.DateCreated,
+        PasswordProtected : room.Password != ""
     })))
 })
 

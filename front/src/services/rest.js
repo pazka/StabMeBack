@@ -5,7 +5,7 @@ export function getBaseUrl() {
     const port = url[3] ?? ""
     const dynamicUrl = protocol + domain + port
 
-    return (process.env.NODE_ENV !== 'production') ? "http://localhost:9001" : dynamicUrl
+    return (process.env.NODE_ENV !== 'production') ? "http://localhost:8080" : dynamicUrl
 }
 
 export function getRoomName(){

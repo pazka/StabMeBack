@@ -16,6 +16,7 @@ export default function MouseDisplay() {
         setTmpPos([position.x, position.y])
     })
 
+    //send(On.snd_join,roomId)
     sub(On.rcv_mouse, 'md', (data) => {
         let newMice = {...mice}
         if (data.name)
@@ -61,11 +62,7 @@ export default function MouseDisplay() {
 
     return (<div className={"mouse-container"}>
                 <div className={"info"}>
-                    <p>{Object.values(mice).length + 1} users in this room.</p>
-                    <p>
-                        <span> You are </span>
-                        <input defaultValue={"Anon"} type="text" onChange={handleNameChange}/>
-                    </p>
+                    <p>{Object.values(mice).length + 1} users online on this game.</p>
                 </div>
 
             {Object.values(mice).map((m, i) => getUserMice(m, i))}

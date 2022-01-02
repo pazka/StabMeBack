@@ -7,6 +7,12 @@ import {
     BrowserRouter,
     Route
 } from 'react-router-dom';
+import SocketIOService from "./services/socket";
+import Lobby from "./Pages/Lobby";
+import Game from "./Pages/Game";
+import StabMeBackPalette from "./services/theme";
+import {Provider} from "react-redux";
+import store from "./services/redux"
 
 if(process.env.NODE_ENV === 'production'){
     console.log("Have fun looking at the code !")
@@ -15,15 +21,18 @@ if(process.env.NODE_ENV === 'production'){
         console.group = ()=>{}
         console.groupEnd = ()=>{}
         console.info = ()=>{}
-        console.warn = ()=>{}
     }
 }
 
+SocketIOService()
+
 ReactDOM.render(
     <BrowserRouter>
-        <div>
-            <Route path="/" render={()=><App />}/>
-        </div>
+        <Provider store={store}>
+            <StabMeBackPalette>
+                <App/>
+            </StabMeBackPalette>
+        </Provider >
     </BrowserRouter >,
   document.getElementById('root')
 );

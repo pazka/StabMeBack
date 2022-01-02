@@ -33,5 +33,6 @@ const On = Object.freeze({
     rcv_leave : "rcv_leave",
     
     ui_newName : "ui_newName",
+    ui_changeTheme : "ui_changeTheme"
 })
 export {On}
