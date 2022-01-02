@@ -1,10 +1,13 @@
 ﻿import logger from "../Services/logger";
 import Room from "../Domain/Room";
 import {getConfig} from "../Services/env";
+import internal_events from "../Services/Constants/allEvents";
+import {send} from "../Services/events";
 
 let allRooms: any = {}
 
 export function createRoom(password: string = "",
+                           name : string,
                            APDropInterval: number = getConfig("DefaultValues.APDropInterval"),
                            APDropAmount: number = getConfig("DefaultValues.APDropAmount"),
                            startAP: number = getConfig("DefaultValues.startAP"),
@@ -12,7 +15,7 @@ export function createRoom(password: string = "",
                            startRange: number = getConfig("DefaultValues.startRange"),
                            roomSize: number = getConfig("DefaultValues.roomSize"),
                            maxPlayers: number = getConfig("DefaultValues.maxPlayers")) : Room {
-    let room = new Room(newUniqueId(8))
+    let room = new Room(newUniqueId(8),name)
     allRooms[room.Id] = room
     
     room.Password = password
@@ -25,12 +28,14 @@ export function createRoom(password: string = "",
     room.Size = roomSize
     room.MaxPlayers = maxPlayers
 
+    
     logger.log(`Created room#${room.Id}/DAP=${room.DropInterval}`)
+    send(internal_events.ROOM_UPDATED,room)
     return room
 }
 
-export function getAllRooms() {
-    return allRooms
+export function getAllRooms() : Room[]{
+    return Object.values(allRooms)
 }
 
 export function getRoom(id: string) : Room {

@@ -1,15 +1,9 @@
-export function getBaseUrl() {
-    const url = window.location.href.match(/(https?:\/\/)([\w.]*)([:]\d*)?\/(\w*)/)
-    const protocol = url[1] ?? ""
-    const domain = url[2] ?? ""
-    const port = url[3] ?? ""
-    const dynamicUrl = protocol + domain + port
+import {config, getBaseUrl} from "./config";
+import {objToQueryParams} from "../utils/url-formation";
+import * as axios from "axios"
 
-    return (process.env.NODE_ENV !== 'production') ? "http://localhost:8080" : dynamicUrl
-}
-
-export function getRoomName(){
-   return window.location.href.match(/(https?:\/\/)([\w.]*)([:]\d*)?\/(\w*)/)[4]
+export function getRoomName() {
+    return window.location.href.match(/(https?:\/\/)([\w.]*)([:]\d*)?\/(\w*)/)[4]
 }
 
 async function sendFile(fromFile, urlPath) {
@@ -19,9 +13,10 @@ async function sendFile(fromFile, urlPath) {
     return fetch(getBaseUrl() + urlPath, {method: "POST", body: formData})
 }
 
-export async function postData(urlPath = '', data = {}) {
+export async function postData(urlPath = '', queryParams, data) {
     // Default options are marked with *
-    const response = await fetch(getBaseUrl() +urlPath, {
+
+    const req = await fetch(getBaseUrl() + urlPath + objToQueryParams(queryParams), {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -34,9 +29,19 @@ export async function postData(urlPath = '', data = {}) {
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify(data) // body data type must match "Content-Type" header
     });
-    return response.json(); // parses JSON response into native JavaScript objects
+    
+    return axios(req).catch(err => {throw err}).then(res => res.data);
 }
 
-export async function sendImg(formFile, roomId, layerId) {
-    return sendFile(formFile, `/api/room/${roomId}/${layerId}/upload`)
+export async function getData(urlPath = '', queryParams) {
+    return await axios.get(getBaseUrl() + urlPath + objToQueryParams(queryParams)).catch(err => {throw err}).then(res => res.data);
 }
+
+export async function deleteData(urlPath = '', queryParams) {
+    return await axios.delete(getBaseUrl() + urlPath + objToQueryParams(queryParams)).catch(err => {throw err}).then(res => res.data);
+}
+
+//
+// export async function sendImg(formFile, roomId, layerId) {
+//     //return sendFile(formFile, `/api//${roomId}/${layerId}/upload`)
+// }

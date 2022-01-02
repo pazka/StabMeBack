@@ -23,10 +23,11 @@ export async function init(httpServer: any) {
 
     sub(internal_events.ROOM_UPDATED,(room : Room)=>{
         io.to(room.Id).emit(allEvents.updateRoom, room)
+        io.emit(allEvents.lightUpdateRoom, room.toShallow())
     })
 
     sub(internal_events.ERROR, (error : any)=>{
-        io.broadcast.emit(allEvents.error, error)
+        io.emit(allEvents.error, error)
     });
 }
 

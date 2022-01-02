@@ -6,6 +6,7 @@ var allEvents;
     allEvents["leave"] = "leave";
     allEvents["mouse"] = "mouse";
     allEvents["updateRoom"] = "updateRoom";
+    allEvents["lightUpdateRoom"] = "lightUpdateRoom";
     allEvents["loadRoom"] = "loadRoom";
     allEvents["saveRoom"] = "saveRoom";
     allEvents["error"] = "error";

@@ -1,4 +1,4 @@
-﻿import {useLocation} from "react-router";
+import {useLocation} from "react-router";
 import MouseDisplay from "../Components/MouseDisplay";
 import {On,send} from "../services/events";
 import SocketIOService from "../services/socket"

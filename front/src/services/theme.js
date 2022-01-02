@@ -1,4 +1,4 @@
-﻿import {ThemeProvider} from "@mui/material";
+import {ThemeProvider} from "@mui/material";
 import {useState} from "react";
 import {On, sub} from "./events";
 import {connect} from "react-redux";

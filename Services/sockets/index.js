@@ -59,9 +59,10 @@ function init(httpServer) {
             });
             (0, events_1.sub)(allEvents_2.default.ROOM_UPDATED, function (room) {
                 io.to(room.Id).emit(allEvents_1.default.updateRoom, room);
+                io.emit(allEvents_1.default.lightUpdateRoom, room.toShallow());
             });
             (0, events_1.sub)(allEvents_2.default.ERROR, function (error) {
-                io.broadcast.emit(allEvents_1.default.error, error);
+                io.emit(allEvents_1.default.error, error);
             });
             return [2];
         });

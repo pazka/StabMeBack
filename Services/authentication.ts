@@ -5,6 +5,16 @@ import {NextFunction, Response} from "express";
 import IClientSession from "./Constants/IClientSession";
 import {getConfig} from "./env";
 import {getPlayer} from "../Controllers/playerController";
+import {validationResult} from "express-validator";
+
+export const requireBodyValidation = (req: Request, res: Response, next: NextFunction) => {
+    const valRes = validationResult(req)
+    if (!valRes.isEmpty()) {
+        return res.status(400).send(validationResult(req).array())
+    }
+    
+    next()
+}
 
 export const requireRoomJoined = (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore

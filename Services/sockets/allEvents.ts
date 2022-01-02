@@ -4,6 +4,7 @@ enum allEvents {
     leave = "leave",
     mouse = "mouse",
     updateRoom = "updateRoom",
+    lightUpdateRoom = "lightUpdateRoom",
     loadRoom = "loadRoom",
     saveRoom = "saveRoom",
     error = "error"

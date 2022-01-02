@@ -9,6 +9,7 @@ import StabMeBackPalette from "./services/theme";
 import {Provider} from "react-redux";
 import {persistor, store} from "./services/redux"
 import {PersistGate} from 'redux-persist/integration/react'
+import {triggerStartupEffects} from "./services/effects/startupEffect";
 
 if (process.env.NODE_ENV === 'production') {
     console.log("Have fun looking at the code !")

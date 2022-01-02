@@ -1,7 +1,8 @@
 import {io} from "socket.io-client";
-import * as events from "./events";
-import {On} from "./events";
-import {getBaseUrl} from "./rest";
+import {setupEventsListeners} from "./ioevents";
+import {getBaseUrl} from "../config";
+import {On} from "../events";
+import * as events from "../events";
 
 let socket;
 let currentRoom
@@ -25,8 +26,6 @@ export default function SocketIOService(){
     })
     socket.on("leave",(data)=>events.send(On.rcv_leave,data))
 
-    socket.on("loadRoom",data => events.send(On.rcv_load,data))
-
     socket.on("mouse",(data)=>events.send(On.rcv_mouse,data))
     
     socket.on("error",(data)=> {
@@ -42,4 +41,6 @@ export default function SocketIOService(){
         currentRoom = roomId
         socket.emit("join", roomId)
     }
+
+    setupEventsListeners(socket)
 }

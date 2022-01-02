@@ -1,4 +1,4 @@
-﻿import {Dialog, DialogContent} from "@mui/material";
+import {Dialog, DialogContent} from "@mui/material";
 import React from "react";
 
 function CreateGameDialog(props){

@@ -2,8 +2,7 @@ import {AppBar, IconButton, Toolbar} from "@mui/material";
 import ContrastIcon from '@mui/icons-material/Contrast';
 import {On, send} from "../services/events";
 import {connect} from "react-redux";
-import {setTheme} from "../services/redux/reducers/userPrefSlice";
-import {switchTheme} from "../services/redux/actions/userPrefActions";
+import {switchTheme} from "../services/effects/userPrefEffects";
 
 function MenuBar(props) {
     return <AppBar position="static">

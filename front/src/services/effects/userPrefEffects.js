@@ -1,4 +1,4 @@
-﻿import {setTheme} from "../reducers/userPrefSlice";
+import {setTheme} from "../redux/reducers/userPrefSlice";
 
 export function switchTheme(theme){
     return (dispatch,getState)=>{

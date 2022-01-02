@@ -3,9 +3,9 @@ import {sub} from "../Services/events";
 import internal_events from "../Services/Constants/allEvents";
 import {addPlayerToRoom, triggerRoomApDrop} from "../Controllers/gameController";
 import {createRoom, getAllRooms, getRoom, removeRoom} from "../Controllers/roomController";
-import {body} from "express-validator";
+import {body, check} from "express-validator";
 import Room from "../Domain/Room";
-import {requireAdmin, requirePlayerCreated, requireRoomJoined} from "../Services/authentication";
+import {requireAdmin, requireBodyValidation, requirePlayerCreated, requireRoomJoined} from "../Services/authentication";
 import IClientSession from "../Services/Constants/IClientSession";
 import {getPlayer} from "../Controllers/playerController";
 import Player from "../Domain/Player";
@@ -17,25 +17,21 @@ const router = express.Router()
 router.get('/admin', requireAdmin, adminRoomRoutes)
 
 router.get('/all', (req, res, next) => {
-    res.send(getAllRooms().map((room: Room) => ({
-        Id: room.Id,
-        NbPlayers: room.Players.length,
-        MaxPlayers: room.MaxPlayers,
-        DateCreated: room.DateCreated,
-        PasswordProtected : room.Password != ""
-    })))
+    res.send(getAllRooms().map((room: Room) => (room.toShallow())))
 })
 
 router.post('/create',
     requirePlayerCreated,
-    body('password').default('').trim().escape(),
-    body('dropInterval').default(getConfig("DefaultValues.APDropInterval")).isNumeric(),
-    body('dropAmount').default(getConfig("DefaultValues.APDropAmount")).isNumeric(),
-    body('startAP').default(getConfig("DefaultValues.startAP")).isNumeric(),
-    body('startHP').default(getConfig("DefaultValues.startHP")).isNumeric(),
-    body('startRange').default(getConfig("DefaultValues.startRange")).isNumeric(),
-    body('maxPlayers').default(getConfig("DefaultValues.maxPlayers")).isNumeric(),
-    body('roomSize').default(getConfig("DefaultValues.roomSize")).isNumeric(),
+    check('password').default('').trim().escape().isLength({min : 0 , max : 30}).withMessage('Must be less than 30 chars'),
+    check("name").trim().escape().isLength({min : 5 , max : 50}).withMessage('Must be between 5 and 50 chars'),
+    check('dropInterval').default(getConfig("DefaultValues.APDropInterval")).isInt({min : 1,max : 7*24*60}).withMessage('Must be 1 < x < 7*24*60'),
+    check('dropAmount').default(getConfig("DefaultValues.APDropAmount")).isInt({min : 1, max : 1000}).withMessage('Must be 1 < x < 1000'),
+    check('startAP').default(getConfig("DefaultValues.startAP")).isInt({min : 0, max : 1000}).withMessage('Must be 0 < x < 1000'),
+    check('startHP').default(getConfig("DefaultValues.startHP")).isInt({min : 1, max : 1000}).withMessage('Must be 1 < x < 1000'),
+    check('startRange').default(getConfig("DefaultValues.startRange")).isInt({min : 0, max : 1000}).withMessage('Must be 0 < x < 1000'),
+    check('maxPlayers').default(getConfig("DefaultValues.maxPlayers")).isInt({min : 2, max : 20}).withMessage('Must be 2 < x < 20'),
+    check('roomSize').default(getConfig("DefaultValues.roomSize")).isInt({min : 2, max : 1000}).withMessage('Must be 2 < x < 1000'),
+    requireBodyValidation,
     (req, res, next) => {
         // @ts-ignore
         const session: IClientSession = req.session
@@ -43,6 +39,7 @@ router.post('/create',
         try {
             const room = createRoom(
                 req.body.password,
+                req.body.name,
                 req.body.dropInterval,
                 req.body.dropAmount,
                 req.body.startAP,

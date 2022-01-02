@@ -6,20 +6,15 @@ import Game from "./Pages/Game";
 import React from "react";
 import MenuBar from "./Components/MenuBar";
 import {styled} from '@mui/material/styles';
+import {Notifier} from "./Components/Commons/Notifier";
 
 const StyleWrapper = styled("div")(
-    ({theme}) => `
-  background-color: ${theme.background.level1};
-  height : 100vh;
-  overflow : hidden;ro
-  width : 100%;
-  --color : ${theme.palette.text.main};
-  
-  --svg : {
-    fill : ${theme.palette.text.main};
-  }
-`,
-);
+    ({theme}) => ({
+        backgroundColor: theme.background.level1,
+        height: "auto",
+        minHeight: "100vh",
+        width: "100%",
+    }));
 
 
 function App(props) {
@@ -31,6 +26,7 @@ function App(props) {
             <Route path="/" render={() => <Lobby/>}/>
             <Route path="/:roomId" render={(props) => <Game roomId={props.match.params.roomId}/>}/>
         </div>
+        <Notifier/>
     </StyleWrapper>
 }
 

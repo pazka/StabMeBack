@@ -19,6 +19,7 @@ class HistoryItem {
 
 export default class Room extends TimeStamped {
     Id: string
+    Name : string
     Players: Player[] = []
     History: HistoryItem [] = []
     Size: number = 20
@@ -33,8 +34,9 @@ export default class Room extends TimeStamped {
     
     private APDropInterval: number // in minutes
 
-    constructor(id: string) {
+    constructor(id: string,name : string) {
         super("room_" + id);
+        this.Name = name
     }
 
     increaseHistoryRaw(data: any) {
@@ -69,4 +71,25 @@ export default class Room extends TimeStamped {
     isInBounds(pos: number[]) {
         return !(pos[0] < 0 || pos[0] >= this.Size || pos[1] < 0 || pos[1] >= this.Size)
     }
+    
+    toShallow() : ShallowRoom{
+        return {
+            Id: this.Id,
+            Name : this.Name,
+            NbPlayers: this.Players.length,
+            MaxPlayers: this.MaxPlayers,
+            DateCreated: this.DateCreated,
+            PasswordProtected : this.Password != ""
+        }
+    }        
+    
+}
+
+interface ShallowRoom{
+    Id: string
+    Name : string
+    NbPlayers: number
+    MaxPlayers: number
+    DateCreated: number
+    PasswordProtected : boolean
 }
