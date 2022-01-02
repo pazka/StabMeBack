@@ -1,13 +1,20 @@
 ﻿import {apiGetAllRooms} from "../endpoints/roomEndpoint";
-import {notifyError} from "../../Components/Commons/Notifier";
 import {updateRooms} from "../redux/reducers/lobbySlice";
+import {startLoading, stopLoading} from "../redux/reducers/loadingsSlice";
+import {notifyError} from "../notify";
 
 export function fetchRooms() {
     return async (dispatch, getState) => {
-        const rooms = await apiGetAllRooms().catch(err => {
-            notifyError("Couldn't fetch rooms")
-        })
+        dispatch(startLoading("rooms"))
         
-        dispatch(updateRooms(rooms))
+        apiGetAllRooms().then(rooms=> {
+            dispatch(updateRooms(rooms))
+        }).catch(err => {
+            dispatch(updateRooms([]))
+            notifyError("Couldn't fetch rooms")
+            return []
+        }).finally(e=>{
+            dispatch(stopLoading("rooms"))
+        })
     }
 }

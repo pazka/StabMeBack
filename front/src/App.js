@@ -6,7 +6,8 @@ import Game from "./Pages/Game";
 import React from "react";
 import MenuBar from "./Components/MenuBar";
 import {styled} from '@mui/material/styles';
-import {Notifier} from "./Components/Commons/Notifier";
+import Notifier from "./Components/Commons/Notifier";
+import {connect} from "react-redux";
 
 const StyleWrapper = styled("div")(
     ({theme}) => ({
@@ -15,7 +16,6 @@ const StyleWrapper = styled("div")(
         minHeight: "100vh",
         width: "100%",
     }));
-
 
 function App(props) {
     const location = useLocation()
@@ -30,4 +30,6 @@ function App(props) {
     </StyleWrapper>
 }
 
-export default App;
+export default connect(state=>({
+    userPref : state.userPref
+}))(App);

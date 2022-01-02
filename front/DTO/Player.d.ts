@@ -1,4 +1,4 @@
-﻿
+
 interface Player extends TimeStamped{
     HP: number 
     Range: number 

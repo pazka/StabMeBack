@@ -3,12 +3,19 @@ import { createSlice } from '@reduxjs/toolkit'
 export const lobbySlice = createSlice({
     name: 'lobby',
     initialState: {
-        rooms: []
+        rooms: [],
+        selectGame:-1
     }, 
     reducers: {
         updateRooms : (state, action) => {
             state.rooms = action.payload
-        }
+        },
+        selectGame : (state, action) => {
+            state.selectedGame = action.payload
+        },
+        unselectGame : (state, action) => {
+            state.selectedGame = -1
+        },
     }
 })
 

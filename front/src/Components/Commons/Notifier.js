@@ -1,5 +1,5 @@
 import {SnackbarProvider, useSnackbar} from "notistack";
-import {On, sub} from "../../../services/events";
+import {On, sub} from "../../services/events";
 
 function Notifier (props) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();

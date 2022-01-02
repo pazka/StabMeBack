@@ -3,6 +3,7 @@ import ContrastIcon from '@mui/icons-material/Contrast';
 import {On, send} from "../services/events";
 import {connect} from "react-redux";
 import {switchTheme} from "../services/effects/userPrefEffects";
+import ChooseLang from "./ChooseLang";
 
 function MenuBar(props) {
     return <AppBar position="static">
@@ -11,6 +12,7 @@ function MenuBar(props) {
                         variant={"contained"}>
                 <ContrastIcon color={"text"}/>
             </IconButton>
+            <ChooseLang/>
         </Toolbar>
     </AppBar>
 }

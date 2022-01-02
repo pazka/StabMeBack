@@ -1,4 +1,4 @@
-﻿import {store} from "../redux";
+﻿import store from "../redux";
 import {fetchRooms} from "../effects/lobbyEffects";
 
 export function setupEventsListeners(socket){

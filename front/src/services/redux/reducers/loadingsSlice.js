@@ -4,16 +4,16 @@ export const loadingsSlice = createSlice({
     name: 'loadings',
     initialState: {},
     reducers: {
-        popLoadingId:(state,action)=>{
-            delete state.loadings[action.payload.id]
+        stopLoading:(state,action)=>{
+            delete state[action.payload]
         },
-        pushLoadingId:(state,action)=>{
-            state.loadings[action.payload.id] = action.payload.data
+        startLoading:(state,action)=>{
+            state[action.payload] = true
         },
     }
 })
 
 // Action creators are generated for each case reducer function
-export const { popLoadingId,pushLoadingId } = loadingsSlice.actions
+export const { startLoading,stopLoading } = loadingsSlice.actions
 
 export default loadingsSlice.reducer

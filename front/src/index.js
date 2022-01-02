@@ -1,3 +1,8 @@
+
+import store from "./services/redux"
+import {persistor} from "./services/redux"
+import {Provider} from "react-redux";
+import {PersistGate} from 'redux-persist/integration/react'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -6,10 +11,7 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom';
 import SocketIOService from "./services/socket";
 import StabMeBackPalette from "./services/theme";
-import {Provider} from "react-redux";
-import {persistor, store} from "./services/redux"
-import {PersistGate} from 'redux-persist/integration/react'
-import {triggerStartupEffects} from "./services/effects/startupEffect";
+import {initTranslation} from "./services/traduction";
 
 if (process.env.NODE_ENV === 'production') {
     console.log("Have fun looking at the code !")
@@ -26,6 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 SocketIOService()
+initTranslation()
 
 ReactDOM.render(
     <BrowserRouter>
