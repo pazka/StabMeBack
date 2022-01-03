@@ -2,38 +2,19 @@ import Room from "../Domain/Room";
 import Player from "../Domain/Player";
 import logger from "../Services/logger";
 import GameAction, {GameActionType} from "../Domain/GameAction";
+import GameBonus from "../Domain/GameBonus";
 import {send, sub} from "../Services/events";
 import internal_events from "../Services/Constants/allEvents";
 import {getConfig} from "../Services/env";
 import {getDistance, playerDist} from "../utils/GameUtils";
-import {removeRoom} from "./roomController";
+import {removeBonusFromRoom, removeRoom} from "./roomController";
 
 const GamePlayer = new Player("###GAME###")
 GamePlayer.Name = "Game"
 
-export function addPlayerToRoom(room: Room, player: Player, password: string): Room {
-    if (password != room.Password)
-        throw new Error(`Bad password`)
+const BonusPlayer = new Player("###BONUS###")
+BonusPlayer.Name = "Bonus"
 
-    if (room.Players.findIndex((p) => p.Id == player.Id) != -1) {
-        logger.warn(`player[${player.Name}]#${player.Id} already in room`)
-        return
-    }
-
-    if (room.Players.length >= room.MaxPlayers) {
-        throw new Error(`Room is full`)
-    }
-
-    player.HP = room.StartHP
-    player.Range = room.StartRange
-    player.AP = room.StartAP
-    player.Pos = [Math.floor(Math.random()*room.Size),Math.floor(Math.random()*room.Size)]
-
-    room.Players.push(player)
-    player.RoomId = room.Id
-
-    return room
-}
 
 export function triggerRoomApDrop(room: Room, nb: number) {
     room.Players.forEach(player => {
@@ -93,18 +74,6 @@ export function executePlayerAction(room: Room, action: GameAction) {
     }
 }
 
-export function kickPlayerOfRoom(room: Room, player: Player) {
-    const playerIndex = room.Players.findIndex((p) => p.Id == player.Id)
-    if (playerIndex < 0) {
-        logger.warn(`player[${player.Name}]#${player.Id} not in room`)
-        return
-    }
-
-    room.Players[playerIndex].RoomId = null
-    room.Players = room.Players.splice(playerIndex, 1)
-    
-    return room
-}
 
 export function _tryTransferAP(action: GameAction) {
     if (action.Caster.AP < action.Params) {
@@ -138,6 +107,23 @@ export function _tryShootPlayer(action: GameAction) {
     action.Caster.AP -= finalAPUsed
     action.Receiver.HP -= finalAPUsed
     action.Params = finalAPUsed
+}
+
+export function _tryConsumeBonus(room : Room, player : Player){
+    room.ActiveBonuses.forEach((bonus : GameBonus)=>{
+        if(getDistance(bonus.Pos,player.Pos) != 0)
+            return;
+        
+        const action = new GameAction()
+            action.Type = bonus.Type
+            action.Caster = BonusPlayer
+            action.Receiver = player
+            action.Params = bonus.Params
+            action.saveInitState()
+
+            executePlayerAction(room,action)
+            removeBonusFromRoom(room,bonus)
+    })
 }
 
 export function _tryMovePlayer(room: Room, action: GameAction) {

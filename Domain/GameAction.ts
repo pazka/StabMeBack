@@ -5,6 +5,7 @@ export enum GameActionType {
     SHOOT = "SHOOT",
     MOVE = "MOVE",
     UPGRADE = "UPGRADE",
+    HEAL = "HEAL",
     WIN = "WIN"
 }
 

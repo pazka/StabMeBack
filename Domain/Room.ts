@@ -3,6 +3,7 @@ import Player from "./Player";
 import GameAction from "./GameAction";
 import {send} from "../Services/events";
 import internal_events from "../Services/Constants/allEvents";
+import GameBonus from "./GameBonus";
 
 const allApDropTriggers: any = {}
 
@@ -22,6 +23,7 @@ export default class Room extends TimeStamped {
     Name : string
     Players: Player[] = []
     History: HistoryItem [] = []
+    ActiveBonuses : GameBonus[] = []
     Size: number = 20
     MaxPlayers: number = 8
     Password: string = ""
