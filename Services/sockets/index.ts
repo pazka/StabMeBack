@@ -31,7 +31,6 @@ export async function init(httpServer: any) {
     });
 }
 
-
 function newSocketConnection(socket: any) {
     let currentRoom: string = null
 

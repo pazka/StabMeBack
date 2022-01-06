@@ -16,6 +16,7 @@ const BonusPlayer = new Player("###BONUS###")
 BonusPlayer.Name = "Bonus"
 
 
+
 export function triggerRoomApDrop(room: Room, nb: number) {
     room.Players.forEach(player => {
         

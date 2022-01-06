@@ -83,7 +83,7 @@ export default class Room extends TimeStamped {
             DateCreated: this.DateCreated,
             PasswordProtected : this.Password != ""
         }
-    }        
+    }
     
 }
 

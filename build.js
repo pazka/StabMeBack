@@ -22,9 +22,10 @@ function moveFiles(){
 
     const toMove = [
         'front/build',
-        'DTOs',
+        'Domains',
         'Controllers',
         'Services',
+        'utils',
         'env.json',
         'index.js',
         'package.json',

@@ -5,11 +5,23 @@ import internal_events from "../Services/Constants/allEvents";
 import {getConfig} from "../Services/env";
 import Room from "../Domain/Room";
 import {removeRoom} from "./roomController";
+import {getItem, saveItem} from "../Services/storage";
+import {hydrate, persist} from "../Services/storage/Persistors/PlayerPersistor";
 
 let allPlayers: any = {}
 
+const persistor = {hydrate,persist}
+
+export async function init(){
+    allPlayers = persistor.hydrate()
+}
+
+export async function destroy(){
+    persistor.persist(allPlayers)
+}
+
 export function getAllPlayers() {
-    return allPlayers
+    return Object.values(allPlayers)
 }
 
 export function createPlayer(name : string): Player {
@@ -45,6 +57,9 @@ export function cleanUpPlayers(){
 
 const cleanup_interval = setInterval(cleanUpPlayers,getConfig("Entity.CleanupInterval")*2000)
 
+export function tryGetPlayer(playerId: string) : Player | null{
+    return allPlayers[playerId] ?? null
+}
 
 export function getPlayer(playerId: string) : Player {
     if (!Object.keys(allPlayers).includes(playerId))

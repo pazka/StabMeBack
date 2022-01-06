@@ -6,8 +6,20 @@ import {send} from "../Services/events";
 import Player from "../Domain/Player";
 import GameBonus from "../Domain/GameBonus";
 import {GameActionType} from "../Domain/GameAction";
+import {getItem, saveItem} from "../Services/storage";
+import {hydrate, persist} from "../Services/storage/Persistors/RoomPersistor";
 
 let allRooms: any = {}
+
+const persistor = {hydrate,persist}
+
+export async function init(){
+    allRooms = persistor.hydrate()
+}
+
+export async function destroy(){
+    persistor.persist(allRooms)
+}
 
 export function createRoom(password: string = "",
                            name : string,
