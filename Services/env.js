@@ -6,12 +6,19 @@ var env = {};
 var fullEnv;
 function initConfig(filepath) {
     var fullEnv = JSON.parse(fs.readFileSync(filepath));
-    console.log("Environment : " + ((process.argv[2].toLowerCase() == "dev") ? "DEV" : "PROD"));
-    env = fullEnv[(process.argv[2].toLowerCase() == "dev") ? "DEV" : "PROD"];
+    var isDevEnvDefault = process.argv.find(function (p) { return p.toLowerCase() == "dev"; }) || fullEnv.currentConfig == "DEV";
+    console.log("Environment : " + isDevEnvDefault ? "DEV" : "PROD");
+    env = fullEnv[isDevEnvDefault ? "DEV" : "PROD"];
     env = parseEnvironmentVars(env);
     return env;
 }
 exports.initConfig = initConfig;
+function parseEnvironmentVar(envVarName) {
+    if (!Object.keys(process.env).includes(envVarName)) {
+        throw new Error("".concat(envVarName, " not found in environment variables"));
+    }
+    return process.env[envVarName];
+}
 function parseEnvironmentVars(env) {
     Object.keys(env).forEach(function (key) {
         if (typeof env[key] == "object" && !Array.isArray(env[key])) {
@@ -22,7 +29,7 @@ function parseEnvironmentVars(env) {
             if (!Object.keys(process.env).includes(envVarName)) {
                 throw new Error("".concat(envVarName, " not found in environment variables"));
             }
-            env[key] = process.env[envVarName];
+            env[key] = parseEnvironmentVar(envVarName);
         }
     });
     return env;

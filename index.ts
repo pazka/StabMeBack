@@ -113,6 +113,5 @@ function cleanKill(){
     process.exit(0)
 }
 
-process.once('SIGKILL', cleanKill);
 process.once('SIGINT', cleanKill);
 process.once('SIGTERM', cleanKill);

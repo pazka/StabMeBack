@@ -7,14 +7,16 @@ var bodyParser = require("body-parser");
 var morgan = require("morgan");
 var path = require("path");
 var env_1 = require("./Services/env");
-(0, env_1.initConfig)(path.join(__dirname, "./env.json"));
-var PORT = (0, env_1.getConfig)('PORT');
 var api_1 = require("./Services/api");
 var sockets = require("./Services/sockets");
 var playerRoutes_1 = require("./routes/playerRoutes");
 var roomRoutes_1 = require("./routes/roomRoutes");
 var gameRoutes_1 = require("./routes/gameRoutes");
 var logger_1 = require("./Services/logger");
+var playerController = require("./Controllers/playerController");
+var roomController = require("./Controllers/roomController");
+(0, env_1.initConfig)(path.join(__dirname, "./env.json"));
+var PORT = (0, env_1.getConfig)('PORT');
 var app = express();
 var httpServer = http.createServer(app);
 app.use(cors({
@@ -65,11 +67,32 @@ app.use('/api', api_1.default);
 app.use('/player', playerRoutes_1.default);
 app.use('/room', roomRoutes_1.default);
 app.use('/game', gameRoutes_1.default);
-Promise.all([
-    sockets.init(httpServer)
+var chainResolve = function (promises) {
+    return promises.reduce(function (prev, task) {
+        return prev
+            .then(task)
+            .catch(function (err) {
+            console.warn('err', err.message);
+        });
+    }, Promise.resolve());
+};
+chainResolve([
+    sockets.init(httpServer),
+    playerController.init(),
+    roomController.init()
 ]).then(function () {
     httpServer.listen(PORT, function () {
         logger_1.default.log('Listening on ' + PORT);
     });
 });
+function cleanKill() {
+    chainResolve([
+        roomController.destroy(),
+        playerController.destroy()
+    ]);
+    httpServer.close();
+    process.exit(0);
+}
+process.once('SIGINT', cleanKill);
+process.once('SIGTERM', cleanKill);
 //# sourceMappingURL=index.js.map

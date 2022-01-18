@@ -7,12 +7,21 @@ export function initConfig(filepath: string) {
     // @ts-ignore
     let fullEnv: any = JSON.parse(fs.readFileSync(filepath))
 
-    console.log("Environment : " + ((process.argv[2].toLowerCase() == "dev") ? "DEV" : "PROD"))
+    const isDevEnvDefault = process.argv.find(p => p.toLowerCase() == "dev") || fullEnv.currentConfig == "DEV"
+    console.log("Environment : " + isDevEnvDefault ? "DEV" : "PROD")
 
-    env = fullEnv[(process.argv[2].toLowerCase() == "dev") ? "DEV" : "PROD"]
+    env = fullEnv[isDevEnvDefault ? "DEV" : "PROD"]
     env = parseEnvironmentVars(env)
 
     return env
+}
+
+function parseEnvironmentVar(envVarName : any) {
+    if (!Object.keys(process.env).includes(envVarName)) {
+        throw new Error(`${envVarName} not found in environment variables`)
+    }
+
+    return process.env[envVarName]
 }
 
 function parseEnvironmentVars(env: any) {
@@ -26,7 +35,7 @@ function parseEnvironmentVars(env: any) {
                 throw new Error(`${envVarName} not found in environment variables`)
             }
             
-            env[key] = process.env[envVarName]
+            env[key] = parseEnvironmentVar(envVarName)
         }
     })
 
